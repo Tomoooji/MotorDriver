@@ -14,10 +14,10 @@ class MotorDriverBase{
     int _velocity;
     float _accel;
     float _decel;
-    
-  private:
     enum Mode{MODE_INVALID,MODE_DIGITAL,MODE_ANALOG} _MODE;
      Mode checkPin(uint8_t pin){return isInputOnly(pin)? MODE_INVALID: (isDigitalOnly(pin)? MODE_DIGITAL: MODE_ANALOG);}
+    
+  private:
     void switchMode_impl(uint8_t pin1, uint8_t pin2);
     int move_impl(int velocity, bool usedefault);
 
@@ -38,7 +38,7 @@ class MotorDriverBase{
       void setSpeed(uint8_t speed); // change output value
       void setDirec(bool reverse = true); // makes direction reversed
     // Functions //
-    int move(){retun this->move_impl(0, true);}
+    int move(){return this->move_impl(0, true);}
     int move(int velocity){return this->move_impl(velocity,false);}
       virtual int moveForward() = 0;  // returns output speed
       virtual int moveBackward() = 0; // returns output speed

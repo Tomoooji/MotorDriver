@@ -7,7 +7,7 @@ bool MotorDriver3pin::attach(uint8_t pin1, uint8_t pin2){
 
 bool MotorDriver3pin::attach(uint8_t pin1, uint8_t pin2, uint8_t pinPWM){
   MotorDriverBase::switchMode(pin1, pin2);
-  if(isInputOnly(pinPWM) || this->_MODE == MODE_INVALID){
+  if(this->checkPin(pinPWM) == MODE_INVALID || this->_MODE == MODE_INVALID){
     return false;
   }else{
     this->_pin1 = pin1;
@@ -16,7 +16,7 @@ bool MotorDriver3pin::attach(uint8_t pin1, uint8_t pin2, uint8_t pinPWM){
     pinMode(this->_pin1, OUTPUT);
     pinMode(this->_pin2, OUTPUT);
     pinMode(this->_pinPWM, OUTPUT);
-    this->_MODE = (isDigitalOnly(pinPWM) || this->_MODE == MODE_DIGITAL)? MODE_DIGITAL: MODE_ANALOG;
+    this->_MODE = (this->checkPin(pinPWM) == MODE_DIGITAL|| this->_MODE == MODE_DIGITAL)? MODE_DIGITAL: MODE_ANALOG;
     return true;
   }
 }

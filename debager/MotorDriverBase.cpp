@@ -1,13 +1,12 @@
 #include "MotorDriverBase.h"
 
-#define sign(x) (x>0) - (x<0) 
-
+inline int sign(int x){return (x>0) - (x<0);}
 
 MotorDriverBase::MotorDriverBase(bool digital, const uint8_t MIN, const uint8_t MAX):
   _MODE(digital? MODE_DIGITAL: MODE_ANALOG), _MIN(MIN), _MAX(MAX), _velocity(0), _accel(0), _decel(0){}
 
 
-void MotorDriverBase::switchMode(uint8_t pin1, uint8_t pin2){
+void MotorDriverBase::switchMode_impl(uint8_t pin1, uint8_t pin2){
   if(this->checkPin(pin1) * this->checkPin(pin2)){
     if(this->checkPin(pin1)+this->checkPin(pin2) == MODE_ANALOG*2){
       this->_MODE = MODE_ANALOG;
@@ -50,7 +49,7 @@ void MotorDriverBase::setDirec(bool reverse){
   //return true;
 }
 
-int MotorDriverBase::move(int velocity, bool usedefault){
+int MotorDriverBase::move_impl(int velocity, bool usedefault){
   if(usedefault)this->_velocity = velocity;
   return this->_velocity? (this->_velocity > 0? this->moveForward(): this->moveBackward()): this->stop();
 }
