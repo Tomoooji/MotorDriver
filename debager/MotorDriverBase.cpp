@@ -27,7 +27,7 @@ void MotorDriverBase::setAccel(float accel, float decel){
 bool MotorDriverBase::setVelocity(int velocity){
   if(abs(velocity) <= LIMIT_MAX){
     this->setSpeed(abs(velocity));
-    this->setDirec(velocity < 0);
+    this->setDirec(sign(velocity));
     return true;
   }
   return false;
@@ -44,9 +44,8 @@ void MotorDriverBase::setSpeed(uint8_t speed){
       return;
   }
 }
-void MotorDriverBase::setDirec(bool reverse){
-  this->_velocity *= -reverse;
-  //return true;
+void MotorDriverBase::setDirec(int direc){
+  if(sign(this->_velocity) != sign(direc)) this->_velocity *= -1;
 }
 
 int MotorDriverBase::move_impl(int velocity, bool usedefault){

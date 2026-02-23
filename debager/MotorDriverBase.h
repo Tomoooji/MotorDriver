@@ -37,7 +37,7 @@ class MotorDriverBase{
      void setAccel(float accel){return this->setAccel(accel, accel);}
     bool setVelocity(int velocity); // velocity means +/-speed // returns was input corrected 
       void setSpeed(uint8_t speed); // change output value
-      void setDirec(bool reverse = true); // makes direction reversed
+      void setDirec(int direc); // makes direction reversed
     // Functions //
     int move(){return this->move_impl(0, true);}
     int move(int velocity){return this->move_impl(velocity,false);}
