@@ -33,9 +33,9 @@ class MotorDriverBase{
       virtual int stop() = 0; // may not have to be int ?
     virtual int lock() = 0; // also returns outputvalue (=stregth)
     int accelLiner(uint8_t target); // incliment speed until target speed, not velocity
-     int accelLiner(){return this->accelLiner(_MAX);}
+     int accelLiner(){return this->accelLiner(this->_MAX);}
     int decelLiner(uint8_t target); // declement speed until target speed, not velocity
-     int decelLiner(){return this->decelLiner(_MIN);}
+     int decelLiner(){return this->decelLiner(this->_MIN);}
 
     uint8_t MIN(){return this->_MIN;}
     uint8_t MAX(){return this->_MAX;}

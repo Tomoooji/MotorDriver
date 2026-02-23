@@ -2,8 +2,10 @@
 
 #define sign(x) (x>0) - (x<0) 
 
+
 MotorDriverBase::MotorDriverBase(bool digital, const uint8_t MIN, const uint8_t MAX):
   _MODE(digital? MODE_DIGITAL: MODE_ANALOG), _MIN(MIN), _MAX(MAX){}
+
 
 bool MotorDriverBase::attach(uint8_t pin1, uint8_t pin2){
   if(this->checkPin(pin1) * this->checkPin(pin2)){
@@ -34,7 +36,16 @@ bool MotorDriverBase::setVelocity(int velocity){
   return false;
 }
 void MotorDriverBase::setSpeed(uint8_t speed){
-  this->_velocity = constrain(speed, this->_MIN, this->_MAX) * sign(this->_velocity);
+  switch(this->_MODE){
+    case MODE_DIGITAL:
+      this->_velocity = speed > this->_MIN? this->_MAX: this->_MIN;
+      return;
+    case MODE_ANALOG:
+      this->_velocity = constrain(speed, this->_MIN, this->_MAX) * sign(this->_velocity);
+      return;
+    case MODE_INVALID:
+      return;
+  }
 }
 void MotorDriverBase::setDirec(bool reverse){
   this->_velocity *= -reverse;
@@ -43,15 +54,15 @@ void MotorDriverBase::setDirec(bool reverse){
 
 int MotorDriverBase::move(int velocity, bool usedefault){
   if(usedefault){
-    return this->_velocity ? (this->_velocity > 0 ? this->moveForward() : this->moveBackward()) : this->stop();
+    return this->_velocity? (this->_velocity > 0? this->moveForward(): this->moveBackward()): this->stop();
   }else{
-    return this->_velocity = velosity ? (this->_velocity > 0 ? this->moveForward() : this->moveBackward()) : this->stop();
+    return this->_velocity = velocity? (this->_velocity > 0? this->moveForward(): this->moveBackward()): this->stop();
   }
 }
 
 
 int MotorDriverBase::accelLiner(uint8_t target){
-  //if(target==-1)target=this->MAX_SPEED;
+  if(this->_MODE != MODE_ANALOG) return 0;
   if(target > this->speed() + this->accel()){ // 加速
     this->setSpeed(this->speed() + this->accel());
   }
@@ -64,7 +75,7 @@ int MotorDriverBase::accelLiner(uint8_t target){
 }
 
 int MotorDriverBase::decelLiner(uint8_t target){
-  //if(target==-1)target=this->MIN_SPEED;
+  if(this->_MODE != MODE_ANALOG) return 0;
   if(target < this->speed() - this->decel()){ // 減速
     this->setSpeed(this->speed() - this->decel());
   }
