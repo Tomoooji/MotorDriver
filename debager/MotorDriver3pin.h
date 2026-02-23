@@ -4,6 +4,8 @@
 #include "MotorDriverBase.h"
 
 class MotorDriver3pin : public MotorDriverBase{
+  private:
+    uint8_t _pinPWM = DEFAULTPWMPIN;
   public:
     using MotorDriverBase::MotorDriverBase;
     bool attach(uint8_t pin1, uint8_t pin2) override;
@@ -12,8 +14,6 @@ class MotorDriver3pin : public MotorDriverBase{
     int moveBackward() override;
     int stop() override;
     int lock() override;
-  private:
-    uint8_t _pinPWM = 11;
 };
 /*
 class L298N{

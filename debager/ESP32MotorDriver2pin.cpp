@@ -13,8 +13,8 @@ bool ESP32MotorDriver2pin::attach(uint8_t pin1, uint8_t pin2){
     case MODE_ANALOG:
       this->_pin1 = pin1;
       this->_pin2 = pin2;
-      ledcAttach(this->_pin1, 12800, 8);
-      ledcAttach(this->_pin2, 12800, 8);
+      ledcAttach(this->_pin1, ESPPWMFreq, 8);
+      ledcAttach(this->_pin2, ESPPWMFreq, 8);
       return true;
     case MODE_INVALID:
       return false;

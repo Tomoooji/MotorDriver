@@ -1,7 +1,7 @@
 #ifndef MOTORDRIVER_BASE_H
 #define MOTORDRIVER_BASE_H
 #include <Arduino.h>
-#include "MD_PinConfiig.h"
+#include "MotorDriverConfig.h"
 
 constexpr uint8_t LIMIT_MIN = 0;
 constexpr uint8_t LIMIT_MAX = 255;

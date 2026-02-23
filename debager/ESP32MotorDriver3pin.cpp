@@ -20,7 +20,7 @@ bool ESP32MotorDriver3pin::attach(uint8_t pin1, uint8_t pin2, uint8_t pinPWM){
       pinMode(this->_pinPWM, OUTPUT);
       this->_MODE = MODE_DIGITAL;
     }else{
-      ledcAttach(this->_pinPWM, 12800, 8);
+      ledcAttach(this->_pinPWM, ESPPWMFreq, 8);
       this->_MODE = MODE_ANALOG;
     }
     return true;
