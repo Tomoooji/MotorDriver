@@ -1,5 +1,5 @@
+#if defined(ARDUINO_ARCH_AVR)
 #include "MotorDriver2pin.h"
-
 
 bool MotorDriver2pin::attach(uint8_t pin1, uint8_t pin2){
   MotorDriverBase::attach(pin1, pin2);
@@ -18,26 +18,68 @@ bool MotorDriver2pin::attach(uint8_t pin1, uint8_t pin2){
 
 
 int MotorDriver2pin::moveForward(){
-  analogWrite(this->_pin1, this->speed());
-  analogWrite(this->_pin2, 0);
+  switch(this->_MODE){
+    case MODE_DIGITAL:
+      digitalWrite(this->_pin1, HIGH);
+      digitalWrite(this->_pin2, LOW);
+      break;
+    case MODE_ANALOG:
+      analogWrite(this->_pin1, this->speed());
+      analogWrite(this->_pin2, 0);
+      break;
+    case MODE_INVALID:
+      return 0;
+  }
   return this->speed();
 }
 
 int MotorDriver2pin::moveBackward(){
-  analogWrite(this->_pin1, 0);
-  analogWrite(this->_pin2, this->speed());
+  switch(this->_MODE){
+    case MODE_DIGITAL:
+      digitalWrite(this->_pin1, LOW);
+      digitalWrite(this->_pin2, HIGH);
+      break;
+    case MODE_ANALOG:
+      analogWrite(this->_pin1, 0);
+      analogWrite(this->_pin2, this->speed());
+      break;
+    case MODE_INVALID:
+      return 0;
+  }
   return this->speed();
 }
 
 int MotorDriver2pin::stop(){
-  analogWrite(this->_pin1, 0);
-  analogWrite(this->_pin2, 0);
+  switch(this->_MODE){
+    case MODE_DIGITAL:
+      digitalWrite(this->_pin1, LOW);
+      digitalWrite(this->_pin2, LOW);
+      break;
+    case MODE_ANALOG:
+      analogWrite(this->_pin1, 0);
+      analogWrite(this->_pin2, 0);
+      break;
+    case MODE_INVALID:
+      return 0;
+  }
   return 0;
 }
 
 int MotorDriver2pin::lock(){
-  analogWrite(this->_pin1, this->speed());
-  analogWrite(this->_pin2, this->speed());
+  switch(this->_MODE){
+    case MODE_DIGITAL:
+      digitalWrite(this->_pin1, HIGH);
+      digitalWrite(this->_pin2, HIGH);
+      break;
+    case MODE_ANALOG:
+      analogWrite(this->_pin1, this->speed());
+      analogWrite(this->_pin2, this->speed());
+      break;
+    case MODE_INVALID:
+      return 0;
+  }
   return this->speed();
 }
 
+
+#endif

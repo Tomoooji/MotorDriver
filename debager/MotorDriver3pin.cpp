@@ -1,7 +1,8 @@
+#if defined(ARDUINO_ARCH_AVR)
 #include "MotorDriver3pin.h"
 
 bool MotorDriver3pin::attach(uint8_t pin1, uint8_t pin2){
-  return this-> attach(pin1, pin2, this->_pinPWM);
+  return this->attach(pin1, pin2, this->_pinPWM);
 }
 
 bool MotorDriver3pin::attach(uint8_t pin1, uint8_t pin2, uint8_t pinPWM){
@@ -22,11 +23,11 @@ bool MotorDriver3pin::attach(uint8_t pin1, uint8_t pin2, uint8_t pinPWM){
 
 int MotorDriver3pin::moveForward(){
   switch(this->_MODE){
-    case MODE_DGITAL:
+    case MODE_DIGITAL:
       digitalWrite(this->_pinPWM, HIGH);
       break;
     case MODE_ANALOG:
-      analogWrite(this-> _pinPWM, this->speed());
+      analogWrite(this->_pinPWM, this->speed());
       break;
     case MODE_INVALID:
       return 0;
@@ -38,11 +39,11 @@ int MotorDriver3pin::moveForward(){
 
 int MotorDriver3pin::moveBackward(){
   switch(this->_MODE){
-    case MODE_DGITAL:
+    case MODE_DIGITAL:
       digitalWrite(this->_pinPWM, HIGH);
       break;
     case MODE_ANALOG:
-      analogWrite(this-> _pinPWM, this->speed());
+      analogWrite(this->_pinPWM, this->speed());
       break;
     case MODE_INVALID:
       return 0;
@@ -54,11 +55,11 @@ int MotorDriver3pin::moveBackward(){
 
 int MotorDriver3pin::stop(){
   switch(this->_MODE){
-    case MODE_DGITAL:
+    case MODE_DIGITAL:
       digitalWrite(this->_pinPWM, LOW);
       break;
     case MODE_ANALOG:
-      analogWrite(this-> _pinPWM, 0);
+      analogWrite(this->_pinPWM, 0);
       break;
     case MODE_INVALID:
       return 0;
@@ -70,11 +71,11 @@ int MotorDriver3pin::stop(){
 
 int MotorDriver3pin::lock(){
   switch(this->_MODE){
-    case MODE_DGITAL:
+    case MODE_DIGITAL:
       digitalWrite(this->_pinPWM, HIGH);
       break;
     case MODE_ANALOG:
-      analogWrite(this-> _pinPWM, this->speed());
+      analogWrite(this->_pinPWM, this->speed());
       break;
     case MODE_INVALID:
       return 0;
@@ -84,3 +85,5 @@ int MotorDriver3pin::lock(){
   return this->speed();
 }
 
+
+#endif

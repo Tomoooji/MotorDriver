@@ -22,26 +22,66 @@ bool ESP32MotorDriver2pin::attach(uint8_t pin1, uint8_t pin2){
 }
 
 int ESP32MotorDriver2pin::moveForward(){
-  ledcWrite(this->_pin1, this->speed());
-  ledcWrite(this->_pin2, 0);
+  switch(this->_MODE){
+    case MODE_DIGITAL:
+      digitalWrite(this->_pin1, HIGH);
+      digitalWrite(this->_pin2, LOW);
+      break;
+    case MODE_ANALOG:
+      ledcWrite(this->_pin1, this->speed());
+      ledcWrite(this->_pin2, 0);
+      break;
+    case MODE_INVALID:
+      return 0;
+  }
   return this->speed();
 }
 
 int ESP32MotorDriver2pin::moveBackward(){
-  ledcWrite(this->_pin1, 0);
-  ledcWrite(this->_pin2, this->speed());
+  switch(this->_MODE){
+    case MODE_DIGITAL:
+      digitalWrite(this->_pin1, LOW);
+      digitalWrite(this->_pin2, HIGH);
+      break;
+    case MODE_ANALOG:
+      ledcWrite(this->_pin1, 0);
+      ledcWrite(this->_pin2, this->speed());
+      break;
+    case MODE_INVALID:
+      return 0;
+  }
   return this->speed();
 }
 
 int ESP32MotorDriver2pin::stop(){
-  ledcWrite(this->_pin1, 0);
-  ledcWrite(this->_pin2, 0);
+  switch(this->_MODE){
+    case MODE_DIGITAL:
+      digitalWrite(this->_pin1, LOW);
+      digitalWrite(this->_pin2, LOW);
+      break;
+    case MODE_ANALOG:
+      ledcWrite(this->_pin1, 0);
+      ledcWrite(this->_pin2, 0);
+      break;
+    case MODE_INVALID:
+      return 0;
+  }
   return 0;
 }
 
 int ESP32MotorDriver2pin::lock(){
-  ledcWrite(this->_pin1, this->speed());
-  ledcWrite(this->_pin2, this->speed());
+  switch(this->_MODE){
+    case MODE_DIGITAL:
+      digitalWrite(this->_pin1, HIGH);
+      digitalWrite(this->_pin2, HIGH);
+      break;
+    case MODE_ANALOG:
+      ledcWrite(this->_pin1, this->speed());
+      ledcWrite(this->_pin2, this->speed());
+      break;
+    case MODE_INVALID:
+      return 0;
+  }
   return this->speed();
 }
 

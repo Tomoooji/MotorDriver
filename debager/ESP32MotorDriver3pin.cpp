@@ -28,30 +28,65 @@ bool ESP32MotorDriver3pin::attach(uint8_t pin1, uint8_t pin2, uint8_t pinPWM){
 }
 
 int ESP32MotorDriver3pin::moveForward(){
+  switch(this->_MODE){
+    case MODE_DIGITAL:
+      digitalWrite(this->_pinPWM, HIGH);
+      break;
+    case MODE_ANALOG:
+      ledcWrite(this->_pinPWM, this->speed());
+      break;
+    case MODE_INVALID:
+      return 0;
+  }
   digitalWrite(this->_pin1, HIGH);
   digitalWrite(this->_pin2, LOW);
-  ledcWrite(this->_pinPWM, this->speed());
   return this->speed();
 }
 
 int ESP32MotorDriver3pin::moveBackward(){
+  switch(this->_MODE){
+    case MODE_DIGITAL:
+      digitalWrite(this->_pinPWM, HIGH);
+      break;
+    case MODE_ANALOG:
+      ledcWrite(this->_pinPWM, this->speed());
+      break;
+    case MODE_INVALID:
+      return 0;
+  }
   digitalWrite(this->_pin1, LOW);
   digitalWrite(this->_pin2, HIGH);
-  ledcWrite(this->_pinPWM, this->speed());
   return this->speed();
 }
-
 int ESP32MotorDriver3pin::stop(){
+  switch(this->_MODE){
+    case MODE_DIGITAL:
+      digitalWrite(this->_pinPWM, LOW);
+      break;
+    case MODE_ANALOG:
+      ledcWrite(this->_pinPWM, 0);
+      break;
+    case MODE_INVALID:
+      return 0;
+  }
   digitalWrite(this->_pin1, LOW);
   digitalWrite(this->_pin2, LOW);
-  ledcWrite(this->_pinPWM, 0);
   return 0;
 }
 
 int ESP32MotorDriver3pin::lock(){
+  switch(this->_MODE){
+    case MODE_DIGITAL:
+      digitalWrite(this->_pinPWM, HIGH);
+      break;
+    case MODE_ANALOG:
+      ledcWrite(this->_pinPWM, this->speed());
+      break;
+    case MODE_INVALID:
+      return 0;
+  }
   digitalWrite(this->_pin1, HIGH);
   digitalWrite(this->_pin2, HIGH);
-  ledcWrite(this->_pinPWM, this->speed());
   return this->speed();
 }
 

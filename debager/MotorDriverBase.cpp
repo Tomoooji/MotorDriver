@@ -27,14 +27,14 @@ void MotorDriverBase::setAccel(float accel, float decel){
 
 bool MotorDriverBase::setVelocity(int velocity){
   if(abs(velocity) <= LIMIT_MAX){
-    this-> setSpeed(abs(velocity));
-    this-> setDirec(velocity < 0);
+    this->setSpeed(abs(velocity));
+    this->setDirec(velocity < 0);
     return true;
   }
   return false;
 }
 void MotorDriverBase::setSpeed(uint8_t speed){
-  this-> _velocity = constrain(speed, this->_MIN, this->_MAX) * sign(this->_velocity);
+  this->_velocity = constrain(speed, this->_MIN, this->_MAX) * sign(this->_velocity);
 }
 void MotorDriverBase::setDirec(bool reverse){
   this->_velocity *= -reverse;
@@ -49,26 +49,26 @@ int MotorDriverBase::move(){
 int MotorDriverBase::accelLiner(uint8_t target){
   //if(target==-1)target=this->MAX_SPEED;
   if(target > this->speed() + this->accel()){ // 加速
-    this-> setSpeed(this->speed() + this->accel());
+    this->setSpeed(this->speed() + this->accel());
   }
   else if(target < this->speed() - this->accel()){ // 減速
-    this-> setSpeed(this->speed() - this->accel());
+    this->setSpeed(this->speed() - this->accel());
   }
   else{ // targetとの差がaccel以下の時はtargetを直代入
-    this-> setVelocity(target);
+    this->setVelocity(target);
   }
 }
 
 int MotorDriverBase::decelLiner(uint8_t target){
   //if(target==-1)target=this->MIN_SPEED;
   if(target < this->speed() - this->decel()){ // 減速
-    this-> setSpeed(this->speed() - this->decel());
+    this->setSpeed(this->speed() - this->decel());
   }
   else if(target > this->speed() + this->decel()){ // 加速
-    this-> setSpeed(this->speed() + this->decel());
+    this->setSpeed(this->speed() + this->decel());
   }
   else{ // targetとの差がdecel以下の時はtargetを直代入
-    this-> setVelocity(target);
+    this->setVelocity(target);
   }
 }
 
