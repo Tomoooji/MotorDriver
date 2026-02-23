@@ -38,10 +38,11 @@ void setup(){
 
 void loop(){
   //モーター出力
-  Motor1.move(); //指定したVelocityに従ってモーターを回転させる
-  Motor1.forward();   //Motor1.move(1)と等価
-  Motor1.backward();  //Motor1.move(-1)と等価
-  Motor1.stop();      //Motor1.move(0)と等価
+  Motor1.move(); //設定済みのVerocityに従ってモーターを回転
+  Motor1.move(velocity); //内部のverocityを引数から更新し、モーターを回転
+  Motor1.forward();   //前進
+  Motor1.backward();  //後退
+  Motor1.stop();      //停止(ニュートラル)
   Motor1.lock();      //モーターの軸を固定して停止
   //加減速制御(デジタル出力のみの場合は無効)
   Motor1.accelLiner(target); //targetが現在の速度より小さい場合はaccelを用いて減速
@@ -57,8 +58,7 @@ void loop(){
 # 注意
 - ## **実機での動作は未検証です！**
 - 3pinの方でpin1,pin2だけを指定した場合、デフォルトのpwmピンが使われます。
-- 2pinの方でpin1,pin2にアナログ出力ができないピンを指定するとエラーを吐きます(多分)。
 
 ---  
 作成者：金栄智治  
-最終更新日：2026/02/18
+最終更新日：2026/02/23
