@@ -2,14 +2,24 @@
 #include "ESP32MotorDriver2pin.h"
 
 bool ESP32MotorDriver2pin::attach(uint8_t pin1, uint8_t pin2){
-  this->_pin1 = pin1;
-  this->_pin2 = pin2;
-  ledcAttach(this->_pin1, 12800, 8);
-  ledcAttach(this->_pin2, 12800, 8);
-  return true;
+  MotorDriverBase::attach(pin1, pin2);
+  switch(this->_MODE){
+    case DIGITAL;
+      this->_pin1 = pin1;
+      this->_pin2 = pin2;
+      pinMode(this->_pin1, OUTPUT);
+      pinMode(this->_pin2, OUTPUT);
+      return true;
+    case ANALOG;
+      this->_pin1 = pin1;
+      this->_pin2 = pin2;
+      ledcAttach(this->_pin1, 12800, 8);
+      ledcAttach(this->_pin2, 12800, 8);
+      return true;
+    case INVALID;
+      return false;
+  }
 }
-    // bool isAvailablePWM(uint8_t pin);
-    // bool isInputOnly(uint8_t pin);
 
 int ESP32MotorDriver2pin::moveForward(){
   ledcWrite(this->_pin1, this->speed());
