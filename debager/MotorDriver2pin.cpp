@@ -1,0 +1,38 @@
+#include "MotorDriver2pin.h"
+
+
+bool MotorDriver2pin::attach(uint8_t pin1, uint8_t pin2){
+  this->_pin1 = pin1;
+  this->_pin2 = pin2;
+  pinMode(this->_pin1, OUTPUT);
+  pinMode(this->_pin2, OUTPUT);
+  return true;
+}
+    // bool isAvailablePWM(uint8_t pin);
+    // bool isInputOnly(uint8_t pin);
+
+
+int MotorDriver2pin::moveForward(){
+  analogWrite(this->_pin1, this->speed());
+  analogWrite(this->_pin2, 0);
+  return this->speed();
+}
+
+int MotorDriver2pin::moveBackward(){
+  analogWrite(this->_pin1, 0);
+  analogWrite(this->_pin2, this->speed());
+  return this->speed();
+}
+
+int MotorDriver2pin::stop(){
+  analogWrite(this->_pin1, 0);
+  analogWrite(this->_pin2, 0);
+  return 0;
+}
+
+int MotorDriver2pin::lock(){
+  analogWrite(this->_pin1, this->speed());
+  analogWrite(this->_pin2, this->speed());
+  return this->speed();
+}
+
