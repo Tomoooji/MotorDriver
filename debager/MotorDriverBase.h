@@ -16,9 +16,9 @@ class MotorDriverBase{
     float _decel;
     enum Mode{MODE_INVALID,MODE_DIGITAL,MODE_ANALOG} _MODE;
      Mode checkPin(uint8_t pin){return isInputOnly(pin)? MODE_INVALID: (isDigitalOnly(pin)? MODE_DIGITAL: MODE_ANALOG);}
+    void switchMode_impl(uint8_t pin1, uint8_t pin2);
     
   private:
-    void switchMode_impl(uint8_t pin1, uint8_t pin2);
     int move_impl(int velocity, bool usedefault);
 
   public:

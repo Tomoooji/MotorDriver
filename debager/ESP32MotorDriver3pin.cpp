@@ -6,7 +6,7 @@ bool ESP32MotorDriver3pin::attach(uint8_t pin1, uint8_t pin2){
 }
 
 bool ESP32MotorDriver3pin::attach(uint8_t pin1, uint8_t pin2, uint8_t pinPWM){
-  MotorDriverBase::switchMode(pin1, pin2);
+  MotorDriverBase::switchMode_impl(pin1, pin2);
   if(this->checkPin(pinPWM) == MODE_INVALID || this->_MODE == MODE_INVALID){
     return false;
   }else{

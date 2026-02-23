@@ -2,7 +2,7 @@
 #include "ESP32MotorDriver2pin.h"
 
 bool ESP32MotorDriver2pin::attach(uint8_t pin1, uint8_t pin2){
-  MotorDriverBase::switchMode(pin1, pin2);
+  MotorDriverBase::switchMode_impl(pin1, pin2);
   switch(this->_MODE){
     case MODE_DIGITAL:
       this->_pin1 = pin1;

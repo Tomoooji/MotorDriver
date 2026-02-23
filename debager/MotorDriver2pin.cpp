@@ -2,7 +2,7 @@
 #include "MotorDriver2pin.h"
 
 bool MotorDriver2pin::attach(uint8_t pin1, uint8_t pin2){
-  MotorDriverBase::switchMode(pin1, pin2);
+  MotorDriverBase::switchMode_impl(pin1, pin2);
   switch(this->_MODE){
     case MODE_DIGITAL:
     case MODE_ANALOG:
