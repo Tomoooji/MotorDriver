@@ -2,20 +2,21 @@
 
 #define sign(x) (x>0) - (x<0) 
 
-MotorDriverBase::MotorDriverBase(int analog, const uint8_t MIN, const uint8_t MAX): _MODE(analog), _MIN(MIN), _MAX(MAX){}
+MotorDriverBase::MotorDriverBase(bool digital, const uint8_t MIN, const uint8_t MAX):
+  _MODE(digital? MODE_DIGITAL: MODE_ANALOG), _MIN(MIN), _MAX(MAX){}
 
 bool MotorDriverBase::attach(uint8_t pin1, uint8_t pin2){
   if(this->checkPin(pin1) * this->checkPin(pin2)){
-    if(this->checkPin(pin1)+this->checkPin(pin2) == ANALOG*2){
-      this->_MODE = ANALOG;
+    if(this->checkPin(pin1)+this->checkPin(pin2) == MODE_ANALOG*2){
+      this->_MODE = MODE_ANALOG;
     }
     else{
-      this->_MODE = DIGITAL;
+      this->_MODE = MODE_DIGITAL;
     }
     return true;
   }
   else{
-    this->_MODE = INVALID;
+    this->_MODE = MODE_INVALID;
     return false;
   }
 }
@@ -37,7 +38,7 @@ void MotorDriverBase::setSpeed(uint8_t speed){
 }
 void MotorDriverBase::setDirec(bool reverse){
   this->_velocity *= -reverse;
-  return true;
+  //return true;
 }
 
 int MotorDriverBase::move(){

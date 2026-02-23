@@ -4,19 +4,19 @@
 bool ESP32MotorDriver2pin::attach(uint8_t pin1, uint8_t pin2){
   MotorDriverBase::attach(pin1, pin2);
   switch(this->_MODE){
-    case DIGITAL;
+    case MODE_DIGITAL:
       this->_pin1 = pin1;
       this->_pin2 = pin2;
       pinMode(this->_pin1, OUTPUT);
       pinMode(this->_pin2, OUTPUT);
       return true;
-    case ANALOG;
+    case MODE_ANALOG:
       this->_pin1 = pin1;
       this->_pin2 = pin2;
       ledcAttach(this->_pin1, 12800, 8);
       ledcAttach(this->_pin2, 12800, 8);
       return true;
-    case INVALID;
+    case MODE_INVALID:
       return false;
   }
 }

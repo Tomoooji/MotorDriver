@@ -5,7 +5,7 @@
 
 #if defined(ESP32)
 //  constexpr int DIGITALPINNUM = 0;
-  constexpr uint8_t _DIGITALPINS[];
+  constexpr uint8_t _DIGITALPINS[] = {};
 //  constexpr int INPUTPINNUM = 4;
   constexpr uint8_t _INPUTPINS[] = {34, 35, 36, 39};
   

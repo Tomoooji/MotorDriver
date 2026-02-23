@@ -4,14 +4,14 @@
 bool MotorDriver2pin::attach(uint8_t pin1, uint8_t pin2){
   MotorDriverBase::attach(pin1, pin2);
   switch(this->_MODE){
-    case DIGITAL;
-    case ANALOG;
+    case MODE_DIGITAL:
+    case MODE_ANALOG:
       this->_pin1 = pin1;
       this->_pin2 = pin2;
       pinMode(this->_pin1, OUTPUT);
       pinMode(this->_pin2, OUTPUT);
       return true;
-    case INVALID;
+    case MODE_INVALID:
       return false;
   }
 }

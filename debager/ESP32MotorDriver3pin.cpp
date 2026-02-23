@@ -7,7 +7,7 @@ bool ESP32MotorDriver3pin::attach(uint8_t pin1, uint8_t pin2){
 
 bool ESP32MotorDriver3pin::attach(uint8_t pin1, uint8_t pin2, uint8_t pinPWM){
   MotorDriverBase::attach(pin1, pin2);
-  if(isInputOnly(pinPWM) || this->_MODE == INVALID){
+  if(isInputOnly(pinPWM) || this->_MODE == MODE_INVALID){
     return false;
   }else{
     this->_pin1 = pin1;
@@ -16,12 +16,12 @@ bool ESP32MotorDriver3pin::attach(uint8_t pin1, uint8_t pin2, uint8_t pinPWM){
     pinMode(this->_pin1, OUTPUT);
     pinMode(this->_pin2, OUTPUT);
 
-    if(isDigitalOnly(pinPWM) || this->_MODE == DIGITAL){
+    if(isDigitalOnly(pinPWM) || this->_MODE == MODE_DIGITAL){
       pinMode(this->_pinPWM, OUTPUT);
-      this->_MODE = DIGITAL;
+      this->_MODE = MODE_DIGITAL;
     }else{
       ledcAttach(this->_pinPWM, 12800, 8);
-      this->_MODE = ANALOG;
+      this->_MODE = MODE_ANALOG;
     }
     return true;
   }
