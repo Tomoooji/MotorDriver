@@ -4,10 +4,10 @@
 
 
 MotorDriverBase::MotorDriverBase(bool digital, const uint8_t MIN, const uint8_t MAX):
-  _MODE(digital? MODE_DIGITAL: MODE_ANALOG), _MIN(MIN), _MAX(MAX){}
+  _MODE(digital? MODE_DIGITAL: MODE_ANALOG), _MIN(MIN), _MAX(MAX), _velocity(0), _accel(0), _decel(0){}
 
 
-bool MotorDriverBase::attach(uint8_t pin1, uint8_t pin2){
+void MotorDriverBase::switchMode(uint8_t pin1, uint8_t pin2){
   if(this->checkPin(pin1) * this->checkPin(pin2)){
     if(this->checkPin(pin1)+this->checkPin(pin2) == MODE_ANALOG*2){
       this->_MODE = MODE_ANALOG;
@@ -15,11 +15,9 @@ bool MotorDriverBase::attach(uint8_t pin1, uint8_t pin2){
     else{
       this->_MODE = MODE_DIGITAL;
     }
-    return true;
   }
   else{
     this->_MODE = MODE_INVALID;
-    return false;
   }
 }
 
@@ -53,11 +51,8 @@ void MotorDriverBase::setDirec(bool reverse){
 }
 
 int MotorDriverBase::move(int velocity, bool usedefault){
-  if(usedefault){
-    return this->_velocity? (this->_velocity > 0? this->moveForward(): this->moveBackward()): this->stop();
-  }else{
-    return this->_velocity = velocity? (this->_velocity > 0? this->moveForward(): this->moveBackward()): this->stop();
-  }
+  if(usedefault)this->_velocity = velocity;
+  return this->_velocity? (this->_velocity > 0? this->moveForward(): this->moveBackward()): this->stop();
 }
 
 
@@ -72,6 +67,7 @@ int MotorDriverBase::accelLiner(uint8_t target){
   else{ // targetとの差がaccel以下の時はtargetを直代入
     this->setVelocity(target);
   }
+  return this->velocity();
 }
 
 int MotorDriverBase::decelLiner(uint8_t target){
@@ -85,5 +81,6 @@ int MotorDriverBase::decelLiner(uint8_t target){
   else{ // targetとの差がdecel以下の時はtargetを直代入
     this->setVelocity(target);
   }
+  return this->velocity();
 }
 

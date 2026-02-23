@@ -6,7 +6,7 @@ bool MotorDriver3pin::attach(uint8_t pin1, uint8_t pin2){
 }
 
 bool MotorDriver3pin::attach(uint8_t pin1, uint8_t pin2, uint8_t pinPWM){
-  MotorDriverBase::attach(pin1, pin2);
+  MotorDriverBase::switchMode(pin1, pin2);
   if(isInputOnly(pinPWM) || this->_MODE == MODE_INVALID){
     return false;
   }else{
