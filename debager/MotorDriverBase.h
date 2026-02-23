@@ -19,13 +19,15 @@ class MotorDriverBase{
   public:
     MotorDriverBase(const bool digital = false, const uint8_t MIN = LIMIT_MIN, const uint8_t MAX = LIMIT_MAX);
     virtual bool attach(uint8_t pin1, uint8_t pin2); // returns ware pins correct
+
     void setAccel(float accel, float decel);
      void setAccel(float accel){return this->setAccel(accel, accel);}
     bool setVelocity(int velocity); // velocity means +/-speed // returns was input corrected 
       void setSpeed(uint8_t speed); // change output value
-      void setDirec(bool reverse = false); // makes direction reversed
+      void setDirec(bool reverse = true); // makes direction reversed
  
-    int move();
+    int move(int velocity, bool usedefault = false);
+     int move(){this->move(0, true);}
       virtual int moveForward() = 0;  // returns output speed
       virtual int moveBackward() = 0; // returns output speed
       virtual int stop() = 0; // may not have to be int ?

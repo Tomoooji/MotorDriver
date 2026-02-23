@@ -41,8 +41,12 @@ void MotorDriverBase::setDirec(bool reverse){
   //return true;
 }
 
-int MotorDriverBase::move(){
-  return this->_velocity ? (this->_velocity > 0 ? this->moveForward() : this->moveBackward()) : this->stop();
+int MotorDriverBase::move(int velocity, bool usedefault){
+  if(usedefault){
+    return this->_velocity ? (this->_velocity > 0 ? this->moveForward() : this->moveBackward()) : this->stop();
+  }else{
+    return this->_velocity = velosity ? (this->_velocity > 0 ? this->moveForward() : this->moveBackward()) : this->stop();
+  }
 }
 
 

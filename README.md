@@ -4,8 +4,8 @@ Arduino UNOとESP32でPWM出力×2ピンタイプとデジタル出力×2ピン+
 速度指定とモーターへの出力を別関数に分けているためデバックが楽(?)です。加速度と減速度を指定して線形な加減速を行うこともできます。  
 exampleにはL298N(3ピン制御×2モーター)用のサンプルコードがあります。
 # 使い方
-Arduino IDEの Sketch → include Library → Add .ZIP Library... からこのzipファイルを選択してください。
-```Arduino
+最初にArduino IDEの Sketch → include Library → Add .ZIP Library... からこのzipファイルを選択してください。
+``` C++
 #include <MotoDriver.h>
 
 //Arduino UNO//
@@ -15,28 +15,35 @@ MotorDriver3pin Motor2; //デジタル出力×2ピン+PWM出力2ピンタイプ
 ESP32MotorDriver2pin Motor1; //PWM出力×2ピンタイプ
 ESP32MotorDriver3pin Motor2; //デジタル出力×2ピン+PWM出力2ピンタイプ
 
+//デジタル出力のみで動かしたい場合は第一引数にtrueを指定
+MotorDriver2pin Motor1{true};
+
 //モーターの上限速度と加減速度を設定することも可能 (デフォルトはmax:255,min:0)
-MotorDriver2pin Motor1{max, min}; //上記の他classも同様
+MotorDriver2pin Motor1{false,max, min}; //上記の他classも同様
 
 void setup(){
   //ピン設定
   Motor1.attach(pin1, pin2);
   Motor2.attach(pin1, pin2, pinPWM);
   //速度設定
-  Motor1.setSpeed(speed);
-  //加速度設定
+  Motor1.setVelocity(speed); //符号が回転方向、絶対値が回転速度
+  //デジタル出力のみの時はspeed=0の時に停止、それ以外は回転し続ける
+   Motor1.setSpeed(speedval); //回転速度だけ変更したい時用
+   //デジタル出力のみの時はspeedval=0の時に停止、それ以外は回転し続ける
+   Motor1.setDirec(true); //回転方向だけ逆にしたい時用
+  //加速度設定(デジタル出力のみの場合は無効)
   Motor1.setAccel(accel, decel);
   Motor1.setAccel(accel); //decelを省略するとaccelと同じになる
 }
 
 void loop(){
   //モーター出力
-  Motor1.move(direc); //direc>0で正転、<0で逆転、==0でニュートラル
+  Motor1.move(); //指定したVelocityに従ってモーターを回転させる
   Motor1.forward();   //Motor1.move(1)と等価
   Motor1.backward();  //Motor1.move(-1)と等価
   Motor1.stop();      //Motor1.move(0)と等価
   Motor1.lock();      //モーターの軸を固定して停止
-  //加減速制御
+  //加減速制御(デジタル出力のみの場合は無効)
   Motor1.accelLiner(target); //targetが現在の速度より小さい場合はaccelを用いて減速
                              //target省略時は上限速度を使用
   Motor1.decelLiner(targat); //targetが現在の速度より大きい場合はdecelを用いて加速
