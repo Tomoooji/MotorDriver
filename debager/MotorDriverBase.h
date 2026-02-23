@@ -16,17 +16,25 @@ class MotorDriverBase{
     float _decel;
     enum Mode{MODE_INVALID,MODE_DIGITAL,MODE_ANALOG} _MODE;
      Mode checkPin(uint8_t pin){return isInputOnly(pin)? MODE_INVALID: (isDigitalOnly(pin)? MODE_DIGITAL: MODE_ANALOG);}
-  public:
-    MotorDriverBase(const bool digital = false, const uint8_t MIN = LIMIT_MIN, const uint8_t MAX = LIMIT_MAX);
-    virtual bool attach(uint8_t pin1, uint8_t pin2); // returns ware pins correct
 
+  public:
+    // Constractors //
+    MotorDriverBase(const bool digital, const uint8_t MIN, const uint8_t MAX);
+    // MIN/MAX片方のみとdigitalだけ指定は不可
+     MotorDriverBase(const bool digital = false): MotorDriverBase(digital, LIMIT_MIN, LIMIT_MAX){};
+     // 全省略だとこっちが呼ばれる
+     MotorDriverBase(const uint8_t MIN, const uint8_t MAX): MotorDriverBase(false, MIN, MAX){};
+     // MIN&MAX指定(これでdigital指定するやつおらんやろ(その場合は一番上))
+    
+    virtual bool attach(uint8_t pin1, uint8_t pin2); // returns ware pins correct
+    // Setters //
     void setAccel(float accel, float decel);
      void setAccel(float accel){return this->setAccel(accel, accel);}
     bool setVelocity(int velocity); // velocity means +/-speed // returns was input corrected 
       void setSpeed(uint8_t speed); // change output value
       void setDirec(bool reverse = true); // makes direction reversed
- 
-    int move(int velocity, bool usedefault = false);
+    // Functions //
+    int move(int velocity, bool usedefault = false); // KUNIKU no SAKU
      int move(){this->move(0, true);}
       virtual int moveForward() = 0;  // returns output speed
       virtual int moveBackward() = 0; // returns output speed
@@ -36,7 +44,7 @@ class MotorDriverBase{
      int accelLiner(){return this->accelLiner(this->_MAX);}
     int decelLiner(uint8_t target); // declement speed until target speed, not velocity
      int decelLiner(){return this->decelLiner(this->_MIN);}
-
+    // Getters //
     uint8_t MIN(){return this->_MIN;}
     uint8_t MAX(){return this->_MAX;}
     int velocity(){return this->_velocity;}
