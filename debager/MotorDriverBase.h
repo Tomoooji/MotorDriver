@@ -15,7 +15,7 @@ class MotorDriverBase{
     float _accel;
     float _decel;
     enum Mode{MODE_INVALID,MODE_DIGITAL,MODE_ANALOG} _MODE;
-     Mode checkPin(uint8_t pin){return isInputOnly(pin)? MODE_INVALID: (isDigitalOnly(pin)? MODE_DIGITAL: MODE_ANALOG);}
+     Mode checkPin(uint8_t pin) const {return isInputOnly(pin)? MODE_INVALID: (isDigitalOnly(pin)? MODE_DIGITAL: MODE_ANALOG);}
     void switchMode_impl(uint8_t pin1, uint8_t pin2);
     
   private:
@@ -29,6 +29,7 @@ class MotorDriverBase{
      // 全省略だとこっちが呼ばれる
     MotorDriverBase(const uint8_t MIN, const uint8_t MAX): MotorDriverBase(false, MIN, MAX){};
      // MIN&MAX指定(これでdigital指定するやつおらんやろ(その場合は一番上))
+    virtual ~MotorDriverBase() = default;
     
     virtual bool attach(uint8_t pin1, uint8_t pin2) = 0; // returns ware pins correct
     // Setters //
@@ -44,10 +45,10 @@ class MotorDriverBase{
       virtual int moveBackward() = 0; // returns output speed
       virtual int stop() = 0; // may not have to be int ?
     virtual int lock() = 0; // also returns outputvalue (=stregth)
-    int accelLiner(uint8_t target); // incliment speed until target speed, not velocity
-     int accelLiner(){return this->accelLiner(this->_MAX);}
-    int decelLiner(uint8_t target); // declement speed until target speed, not velocity
-     int decelLiner(){return this->decelLiner(this->_MIN);}
+    int accelLinear(uint8_t target); // incliment speed until target speed, not velocity
+     int accelLinear(){return this->accelLinear(this->_MAX);}
+    int decelLinear(uint8_t target); // declement speed until target speed, not velocity
+     int decelLinear(){return this->decelLinear(this->_MIN);}
     // Getters //
     uint8_t MIN() const {return this->_MIN;}
     uint8_t MAX() const {return this->_MAX;}

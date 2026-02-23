@@ -55,7 +55,7 @@ int MotorDriverBase::move_impl(int velocity, bool usedefault){
 }
 
 
-int MotorDriverBase::accelLiner(uint8_t target){
+int MotorDriverBase::accelLinear(uint8_t target){
   if(this->_MODE != MODE_ANALOG) return 0;
   if(target > this->speed() + this->accel()){ // 加速
     this->setSpeed(this->speed() + this->accel());
@@ -69,7 +69,7 @@ int MotorDriverBase::accelLiner(uint8_t target){
   return this->velocity();
 }
 
-int MotorDriverBase::decelLiner(uint8_t target){
+int MotorDriverBase::decelLinear(uint8_t target){
   if(this->_MODE != MODE_ANALOG) return 0;
   if(target < this->speed() - this->decel()){ // 減速
     this->setSpeed(this->speed() - this->decel());
