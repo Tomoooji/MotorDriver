@@ -18,7 +18,7 @@ class MotorDriverBase{
      Mode checkPin(uint8_t pin){return isInputOnly(pin)? MODE_INVALID: (isDigitalOnly(pin)? MODE_DIGITAL: MODE_ANALOG);}
 
   public:
-    // Constractors //
+    // Constructors //
     MotorDriverBase(const bool digital, const uint8_t MIN, const uint8_t MAX);
     // MIN/MAX片方のみとdigitalだけ指定は不可
      MotorDriverBase(const bool digital = false): MotorDriverBase(digital, LIMIT_MIN, LIMIT_MAX){};
