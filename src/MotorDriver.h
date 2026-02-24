@@ -3,7 +3,8 @@
 #define MOTORDRIVER_H
 
 #include <Arduino.h>
-#include "MotorDriverBase.h"
+
+//#include "MotorDriverBase.h"
 
 #if defined(ESP32)
   #include "ESP32MotorDriver2pin.h"

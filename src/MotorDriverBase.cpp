@@ -1,73 +1,84 @@
 #include "MotorDriverBase.h"
 
-MotorDriverBase::MotorDriverBase(const int MaxSpeed, const int MinSpeed):
-  MAX_SPEED(MaxSpeed), MIN_SPEED(MinSpeed){}
+inline int sign(int x){return (x>0) - (x<0);}
 
-bool MotorDriverBase::setSpeed(int speed){
-  if(speed <= this->MAX_SPEED && speed >= this->MIN_SPEED){
-    this-> speed = speed;
+MotorDriverBase::MotorDriverBase(bool digital, const uint8_t MIN, const uint8_t MAX):
+  _MODE(digital? MODE_DIGITAL: MODE_ANALOG), _MIN(MIN), _MAX(MAX), _velocity(0), _accel(0), _decel(0){}
+
+
+void MotorDriverBase::switchMode_impl(uint8_t pin1, uint8_t pin2){
+  if(this->checkPin(pin1) * this->checkPin(pin2)){
+    if(this->checkPin(pin1)+this->checkPin(pin2) == MODE_ANALOG*2){
+      this->_MODE = MODE_ANALOG;
+    }
+    else{
+      this->_MODE = MODE_DIGITAL;
+    }
+  }
+  else{
+    this->_MODE = MODE_INVALID;
+  }
+}
+
+void MotorDriverBase::setAccel(float accel, float decel){
+  this->_accel = accel; this->_decel = decel;
+}
+
+bool MotorDriverBase::setVelocity(int velocity){
+  if(abs(velocity) <= LIMIT_MAX){
+    this->setSpeed(abs(velocity));
+    this->setDirec(sign(velocity));
     return true;
   }
-  else{
-    return false;
+  return false;
+}
+void MotorDriverBase::setSpeed(uint8_t speed){
+  switch(this->_MODE){
+    case MODE_DIGITAL:
+      this->_velocity = speed > this->_MIN? this->_MAX: this->_MIN;
+      return;
+    case MODE_ANALOG:
+      this->_velocity = constrain(speed, this->_MIN, this->_MAX) * sign(this->_velocity);
+      return;
+    case MODE_INVALID:
+      return;
   }
 }
-
-uint8_t MotorDriverBase::getSpeed(){
-  return this-> speed;
+void MotorDriverBase::setDirec(int direc){
+  if(sign(this->_velocity) != sign(direc)) this->_velocity *= -1;
 }
 
-void MotorDriverBase::move(int direc){
-  if(direc > 0){
-    this-> forward();
+int MotorDriverBase::move_impl(int velocity, bool usedefault){
+  if(usedefault)this->_velocity = velocity;
+  return this->_velocity? (this->_velocity > 0? this->moveForward(): this->moveBackward()): this->stop();
+}
+
+
+int MotorDriverBase::accelLinear(uint8_t target){
+  if(this->_MODE != MODE_ANALOG) return 0;
+  if(target > this->speed() + this->accel()){ // 加速
+    this->setSpeed(this->speed() + this->accel());
   }
-  else if(direc < 0){
-    this-> backward();
-  }
-  else{
-    this-> stop();
-  }
-}
-
-void MotorDriverBase::setAccel(uint8_t accel){
-  this-> setAccel(accel, accel);
-}
-
-void MotorDriverBase::setAccel(uint8_t accel, uint8_t decel){
-  this-> accel = accel;
-  this-> decel = decel;
-}
-
-uint8_t MotorDriverBase::getAccel(){
-  return this-> accel;
-}
-
-uint8_t MotorDriverBase::getDecel(){
-  return this-> decel;
-}
-
-void MotorDriverBase::accelLiner(int target){
-  if(target==-1)target=this->MAX_SPEED;
-  if(target > this-> speed + this-> accel){ // 加速
-    this-> setSpeed(this-> speed + this-> accel);
-  }
-  else if(target < this-> speed - this-> accel){ // 減速
-    this-> setSpeed(this-> speed - this-> accel);
+  else if(target < this->speed() - this->accel()){ // 減速
+    this->setSpeed(this->speed() - this->accel());
   }
   else{ // targetとの差がaccel以下の時はtargetを直代入
-    this-> setSpeed(target);
+    this->setVelocity(target);
   }
+  return this->velocity();
 }
 
-void MotorDriverBase::decelLiner(int target){
-  if(target==-1)target=this->MIN_SPEED;
-  if(target < this-> speed - this-> decel){ // 減速
-    this-> setSpeed(this-> speed - this-> decel);
+int MotorDriverBase::decelLinear(uint8_t target){
+  if(this->_MODE != MODE_ANALOG) return 0;
+  if(target < this->speed() - this->decel()){ // 減速
+    this->setSpeed(this->speed() - this->decel());
   }
-  else if(target > this-> speed + this-> decel){ // 加速
-    this-> setSpeed(this-> speed + this-> decel);
+  else if(target > this->speed() + this->decel()){ // 加速
+    this->setSpeed(this->speed() + this->decel());
   }
   else{ // targetとの差がdecel以下の時はtargetを直代入
-    this-> setSpeed(target);
+    this->setVelocity(target);
   }
+  return this->velocity();
 }
+
