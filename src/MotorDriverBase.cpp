@@ -3,7 +3,7 @@
 inline int sign(int x){return (x>0) - (x<0);}
 
 MotorDriverBase::MotorDriverBase(bool digital, const uint8_t MIN, const uint8_t MAX):
-  _MODE(digital? MODE_DIGITAL: MODE_ANALOG), _MIN(MIN), _MAX(MAX), _velocity(0), _accel(0), _decel(0){}
+  _MODE(digital? MODE_DIGITAL: MODE_ANALOG), _MIN(MIN), _MAX(MAX){}//, _velocity(0), _accel(0), _decel(0){}
 
 
 void MotorDriverBase::switchMode_impl(uint8_t pin1, uint8_t pin2){
