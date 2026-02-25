@@ -8,6 +8,7 @@ constexpr uint8_t LIMIT_MAX = 255;
 
 class MotorDriverBase{
   protected:
+    bool _flag = false;
     uint8_t _pin1, _pin2;
     const uint8_t _MIN;
     const uint8_t _MAX;
@@ -17,10 +18,9 @@ class MotorDriverBase{
     enum Mode{MODE_INVALID,MODE_DIGITAL,MODE_ANALOG} _MODE;
      Mode checkPin(uint8_t pin) const {return isInputOnly(pin)? MODE_INVALID: (isDigitalOnly(pin)? MODE_DIGITAL: MODE_ANALOG);}
     void switchMode_impl(uint8_t pin1, uint8_t pin2);
-    
+
   private:
     int move_impl(int velocity, bool usedefault);
-
   public:
     // Constructors //
      MotorDriverBase(const bool digital, const uint8_t MIN, const uint8_t MAX);
@@ -32,12 +32,14 @@ class MotorDriverBase{
     virtual ~MotorDriverBase() = default;
     
     virtual bool attach(uint8_t pin1, uint8_t pin2) = 0; // returns ware pins correct
+
     // Setters //
     void setAccel(float accel, float decel);
      void setAccel(float accel){return this->setAccel(accel, accel);}
     bool setVelocity(int velocity); // velocity means +/-speed // returns was input corrected 
       void setSpeed(uint8_t speed); // change output value
       void setDirec(int direc); // makes direction reversed
+    
     // Functions //
     int move(){return this->move_impl(0, true);}
     int move(int velocity){return this->move_impl(velocity,false);}
@@ -49,7 +51,10 @@ class MotorDriverBase{
      int accelLinear(){return this->accelLinear(this->_MAX);}
     int decelLinear(uint8_t target); // declement speed until target speed, not velocity
      int decelLinear(){return this->decelLinear(this->_MIN);}
+
     // Getters //
+    bool flag() const {return this->_flag;}/////
+    uint8_t MODE() const {return this->_MODE;}
     uint8_t MIN() const {return this->_MIN;}
     uint8_t MAX() const {return this->_MAX;}
     int velocity() const {return this->_velocity;}

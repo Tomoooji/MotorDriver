@@ -35,7 +35,7 @@ bool MotorDriverBase::setVelocity(int velocity){
 void MotorDriverBase::setSpeed(uint8_t speed){
   switch(this->_MODE){
     case MODE_DIGITAL:
-      this->_velocity = speed > this->_MIN? this->_MAX: this->_MIN;
+      this->_velocity = (speed > this->_MIN)? this->_MAX: this->_MIN;
       return;
     case MODE_ANALOG:
       this->_velocity = constrain(speed, this->_MIN, this->_MAX) * sign(this->_velocity);
