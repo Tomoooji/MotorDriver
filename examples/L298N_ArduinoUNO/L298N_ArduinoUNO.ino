@@ -1,6 +1,6 @@
 // Arduino UNOでモータードライバーL298Nを制御する //
 
-#include <MotorDriver.h>
+#include <AnalMotorDriver.h>
 
 struct L298N_ArduinoUNO{
   MotorDriver3pin A;

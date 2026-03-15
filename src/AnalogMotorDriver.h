@@ -1,0 +1,59 @@
+#pragma once
+
+inline int sign(auto x){
+  return (x>0) - (x<0);
+}
+
+class AnalogMotor_Base{
+ protected:
+  const uint8_t* _pins = nullptr;
+  int _speed=0;
+ public:
+  AnalogMotor_Base(){}
+  virtual void attach(const uint8_t pins[])=0;
+  virtual void move(int speed) = 0;
+  uint8_t pin(uint8_t idx){
+    return this->_pins[idx];
+  }
+  int speed(){
+    return this->_speed;
+  }
+};
+
+#if defined(ARDUINO_ARCH_AVR)
+
+class AnalogMotor_Arduino: public AnalogMotor_Base{
+ public:
+  using AnalogMotor_Base::AnalogMotor_Base;
+  void attach(const uint8_t pins[])override{
+    this->_pins = pins;
+    pinMode(this->_pins[0], OUTPUT);
+    pinMode(this->_pins[1], OUTPUT);
+  }
+  void move(int speed)override{
+    this->_speed = constrain(abs(speed), 0, 255) * sign(speed);
+    analogWrite(this->_pin[0], speed>0?  speed: 0);
+    analogWrite(this->_pin[0], speed<0? -speed: 0);
+  }
+};
+using AnalogMotor = AnalogMotor_Arduino;
+
+#elif defined(ESP32)
+
+class AnalogMotor_ESP32:public AnalogMotor_Base{
+ public:
+  using AnalogMotor_Base::AnalogMotor_Base;
+  void attach(const uint8_t pins[])override{
+    this->_pins = pins;
+    ledcAttach(this->_pins[0], 12800, 8);
+    ledcAttach(this->_pins[1], 12800, 8);
+  }
+  void move(int speed)override{
+    this->_speed = constrain(abs(speed), 0, 255) * sign(speed);
+    ledcWrite(this->_pins[0], speed>0?  this->_speed: 0);
+    ledcWrite(this->_pins[1], speed<0? -this->_speed: 0);
+  }
+};
+using AnalogMotor = AnalogMotor_ESP32;
+
+#endif
