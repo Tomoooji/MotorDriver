@@ -23,7 +23,7 @@ class AnalogMotor_Base{
 #if defined(ARDUINO_ARCH_AVR)
 
 class AnalogMotor_Arduino: public AnalogMotor_Base{
- public:
+  public:
   using AnalogMotor_Base::AnalogMotor_Base;
   void attach(const uint8_t pins[])override{
     this->_pins = pins;
@@ -32,16 +32,34 @@ class AnalogMotor_Arduino: public AnalogMotor_Base{
   }
   void move(int speed)override{
     this->_speed = constrain(abs(speed), 0, 255) * sign(speed);
-    analogWrite(this->_pin[0], speed>0?  speed: 0);
-    analogWrite(this->_pin[0], speed<0? -speed: 0);
+    analogWrite(this->_pin[0], this->_speed>0?  this->_speed: 0);
+    analogWrite(this->_pin[1], this->_speed<0? -this->_speed: 0);
   }
 };
 using AnalogMotor = AnalogMotor_Arduino;
 
+class AnalogMotor_3pin_Arduino: public AnalogMotor_Base{
+  public:
+  using AnalogMotor_Base::AnalogMotor_Base;
+  void attach(const uint8_t pins[])override{
+    this->_pins = pins;
+    pinMode(this->_pins[0], OUTPUT);
+    pinMode(this->_pins[1], OUTPUT);
+    pinMode(this->_pins[2], OUTPUT);
+  }
+  void move(int speed)override{
+    this->_speed = constrain(abs(speed), 0, 255) * sign(speed);
+    digitalWrite(this->_pin[0], this->_speed>0);
+    digitalWrite(this->_pin[1], this->_speed<0);
+    analogWrite(this->_pin[2], abs(this->_speed));
+  }
+};
+using AnalogMotor_3pin = AnalogMotor_3pin_Arduino;
+
 #elif defined(ESP32)
 
 class AnalogMotor_ESP32:public AnalogMotor_Base{
- public:
+  public:
   using AnalogMotor_Base::AnalogMotor_Base;
   void attach(const uint8_t pins[])override{
     this->_pins = pins;
@@ -50,10 +68,28 @@ class AnalogMotor_ESP32:public AnalogMotor_Base{
   }
   void move(int speed)override{
     this->_speed = constrain(abs(speed), 0, 255) * sign(speed);
-    ledcWrite(this->_pins[0], speed>0?  this->_speed: 0);
-    ledcWrite(this->_pins[1], speed<0? -this->_speed: 0);
+    ledcWrite(this->_pins[0], this->_speed>0?  this->_speed: 0);
+    ledcWrite(this->_pins[1], this->_speed<0? -this->_speed: 0);
   }
 };
 using AnalogMotor = AnalogMotor_ESP32;
+
+class AnalogMotor_3pin_ESP32: public AnalogMotor_Base{
+  public:
+  using AnalogMotor_Base::AnalogMotor_Base;
+  void attach(const uint8_t pins[])override{
+    this->_pins = pins;
+    pinMode(this->_pins[0], OUTPUT);
+    pinMode(this->_pins[1], OUTPUT);
+    ledcAttach(this->_pins[2], 12800, 8);
+  }
+  void move(int speed)override{
+    this->_speed = constrain(abs(speed), 0, 255) * sign(speed);
+    digitalWrite(this->_pin[0], this->_speed>0);
+    digitalWrite(this->_pin[1], this->_speed<0);
+    ledcWrite(this->_pins[2], abs(this->_speed));
+  }
+};
+using AnalogMotor_3pin = AnalogMotor_3pin_ESP32;
 
 #endif
