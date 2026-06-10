@@ -32,8 +32,8 @@ class AnalogMotor_Arduino: public AnalogMotor_Base{
   }
   void move(int speed)override{
     this->_speed = constrain(abs(speed), 0, 255) * sign(speed);
-    analogWrite(this->_pin[0], this->_speed>0?  this->_speed: 0);
-    analogWrite(this->_pin[1], this->_speed<0? -this->_speed: 0);
+    analogWrite(this->_pins[0], this->_speed>0?  this->_speed: 0);
+    analogWrite(this->_pins[1], this->_speed<0? -this->_speed: 0);
   }
 };
 using AnalogMotor = AnalogMotor_Arduino;
@@ -49,9 +49,9 @@ class AnalogMotor_3pin_Arduino: public AnalogMotor_Base{
   }
   void move(int speed)override{
     this->_speed = constrain(abs(speed), 0, 255) * sign(speed);
-    digitalWrite(this->_pin[0], this->_speed>0);
-    digitalWrite(this->_pin[1], this->_speed<0);
-    analogWrite(this->_pin[2], abs(this->_speed));
+    digitalWrite(this->_pins[0], this->_speed>0);
+    digitalWrite(this->_pins[1], this->_speed<0);
+    analogWrite(this->_pins[2], abs(this->_speed));
   }
 };
 using AnalogMotor_3pin = AnalogMotor_3pin_Arduino;
@@ -85,8 +85,8 @@ class AnalogMotor_3pin_ESP32: public AnalogMotor_Base{
   }
   void move(int speed)override{
     this->_speed = constrain(abs(speed), 0, 255) * sign(speed);
-    digitalWrite(this->_pin[0], this->_speed>0);
-    digitalWrite(this->_pin[1], this->_speed<0);
+    digitalWrite(this->_pins[0], this->_speed>0);
+    digitalWrite(this->_pins[1], this->_speed<0);
     ledcWrite(this->_pins[2], abs(this->_speed));
   }
 };
