@@ -12,11 +12,18 @@ class AnalogMotor_Base{
   AnalogMotor_Base(){}
   virtual void attach(const uint8_t pins[])=0;
   virtual void move(int speed) = 0;
-  uint8_t pin(uint8_t idx){
-    return this->_pins[idx];
+  void move(){
+    return this->move(this->_speed);
   }
-  int speed(){
+  int set_speed(int speed){
+    this->_speed = constrain(speed, -255, 255);
     return this->_speed;
+  }
+  const int get_speed(){
+    return this->_speed;
+  }
+  const uint8_t get_pin(uint8_t idx){
+    return this->_pins[idx];
   }
 };
 
