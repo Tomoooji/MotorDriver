@@ -1,64 +1,32 @@
-# MotorDriver ライブラリ
-Arduino UNOとESP32でPWM出力×2ピンタイプとデジタル出力×2ピン+PWM出力2ピンタイプ両方のモータードライバーを制御するためのライブラリです。  
-# 仕様説明
-速度指定とモーターへの出力を別関数に分けているためデバックが楽(?)です。加速度と減速度を指定して線形な加減速を行うこともできます。  
-exampleにはL298N(3ピン制御×2モーター)用のサンプルコードがあります。
-# 使い方
-最初にArduino IDEの Sketch → include Library → Add .ZIP Library... からこのzipファイルを選択してください。
-``` C++
-#include <MotoDriver.h>
+# MotorDriver
+ArduinoとESP32で2ピンと3ピンタイプのモータードライバーをデジタル/アナログ出力で制御するライブラリ  
 
-//Arduino UNO//
-MotorDriver2pin Motor1; //PWM出力×2ピンタイプ
-MotorDriver3pin Motor2; //デジタル出力×2ピン+PWM出力2ピンタイプ
-//ESP32//
-ESP32MotorDriver2pin Motor1; //PWM出力×2ピンタイプ
-ESP32MotorDriver3pin Motor2; //デジタル出力×2ピン+PWM出力2ピンタイプ
-
-//デジタル出力のみで動かしたい場合は第一引数にtrueを指定
-MotorDriver2pin Motor1{true};
-
-//モーターの上限速度(~255)と下限速度(0~)を設定することも可能 (デフォルトはmax:255,min:0)
-MotorDriver2pin Motor1{max, min}; //上記の他classも同様
-
-void setup(){
-  //ピン設定
-  Motor1.attach(pin1, pin2);
-  Motor2.attach(pin1, pin2, pinPWM);
-  //速度設定
-  Motor1.setVelocity(speed); //符号が回転方向、絶対値が回転速度
-  //デジタル出力のみの時はspeed=0の時に停止、それ以外は回転し続ける
-   Motor1.setSpeed(speedval); //回転速度だけ変更したい時用
-   //デジタル出力のみの時はspeedval=0の時に停止、それ以外は回転し続ける
-   Motor1.setDirec(1 or -1); //回転方向だけ指定したい時用
-  //加速度設定(デジタル出力のみの場合は無効)
-  Motor1.setAccel(accel, decel);
-  Motor1.setAccel(accel); //decelを省略するとaccelと同じになる
-}
-
-void loop(){
-  //モーター出力
-  Motor1.move(); //設定済みのVerocityに従ってモーターを回転
-  Motor1.move(velocity); //内部のverocityを引数から更新し、モーターを回転
-  Motor1.forward();   //前進
-  Motor1.backward();  //後退
-  Motor1.stop();      //停止(ニュートラル)
-  Motor1.lock();      //モーターの軸を固定して停止
-  //加減速制御(デジタル出力のみの場合は無効)
-  Motor1.accelLiner(target); //targetが現在の速度より小さい場合はaccelを用いて減速
-                             //target省略時は初期化時の上限速度を使用
-  Motor1.decelLiner(targat); //targetが現在の速度より大きい場合はdecelを用いて加速
-                             //target省略時は初期化時の下限速度を使用
-  //値取得用
-  Motor1.getSpeed();
-  Motor1.getAccel();
-  Motor1.getDecel();
-}
+## ファイル構成
 ```
-# 注意
-- ## **実機での動作は未検証です！**
-- 3pinの方でpin1,pin2だけを指定した場合、デフォルトのpwmピン(Arduino UNO: 11ピン, ESP32: 15ピン)が使われます。
+MotorDriver/
+├─ examples/
+│  ├─ basicusage/
+│  │  └─ basicusage.ino
+│  └─ L298N_analog/
+│     └─ L298N_analog.ino
+├─ src/
+│  ├─ AccelMotorDriver.h
+│  ├─ AnalogMotorDriver.h
+│  └─ DigitalMotorDriver.h
+├─ library.properties
+└─ README.md
+```
 
----  
-作成者：金栄智治  
-最終更新日：2026/02/25
+## 使い方
+### `DigitalMotorDriver.h`
+- インクルードしてDigitalMotorクラスのインスタンスを作成。
+- `attach()`でピン配列を指定して、`move(方向は-1,0,1で指定)`でモーターを回転させる。
+
+### `AnalogMotorDriver.h`
+- インクルードしてAnalogMotorクラス(3ピンの場合はAnalogMotor_3pin)のインスタンスを作成。
+- `attach()`でピン配列を指定して、`move(速度は-255~255で指定)`でモーターを回転させる。
+
+### `AccelMotorDriver.h`
+- インクルードしてAccelMotorクラス(3ピンの場合はAccelMotor_3pin)のインスタンスを作成。加速度と減速度を指定する(減速度は省略すると加速度と同じ値を使う)。
+- `attach()`でピン配列を指定して、`move_a(速度は-255~255で指定)`でモーターを回転させる。
+- `move()`を呼び出すと加減速を無視して即座に指定した速度でモーターを回転させる。
