@@ -1,4 +1,5 @@
 #pragma once
+#include <Arduino.h>
 
 class DigitalMotor{
  private:
@@ -16,6 +17,6 @@ class DigitalMotor{
     digitalWrite(this->_pins[0], this->_direction>0);
     digitalWrite(this->_pins[1], this->_direction<0);
   }
-  uint8_t pin(const uint8_t idx){return this->_pins[idx];}
-  int direction(){return this->_direction;}
+  const uint8_t get_pin(const uint8_t idx){return this->_pins[idx];}
+  const int get_direction(){return this->_direction;}
 };
