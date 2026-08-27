@@ -10,6 +10,7 @@ public:
   virtual void attach(const uint8_t pins[]) = 0;
   virtual int move() = 0;
   int move(int speed) {
+    this->set_speed(speed);
     return this->move();
   }
   int set_speed(int speed) {
@@ -29,6 +30,7 @@ public:
 class AnalogMotor_Arduino : public AnalogMotor_Base {
 public:
   using AnalogMotor_Base::AnalogMotor_Base;
+  using AnalogMotor_Base::move;
   void attach(const uint8_t pins[]) override {
     this->_pins = pins;
     pinMode(this->_pins[0], OUTPUT);
@@ -45,6 +47,7 @@ using AnalogMotor = AnalogMotor_Arduino;
 class AnalogMotor_3pin_Arduino : public AnalogMotor_Base {
 public:
   using AnalogMotor_Base::AnalogMotor_Base;
+  using AnalogMotor_Base::move;
   void attach(const uint8_t pins[]) override {
     this->_pins = pins;
     pinMode(this->_pins[0], OUTPUT);
@@ -65,6 +68,7 @@ using AnalogMotor_3pin = AnalogMotor_3pin_Arduino;
 class AnalogMotor_ESP32 : public AnalogMotor_Base {
 public:
   using AnalogMotor_Base::AnalogMotor_Base;
+  using AnalogMotor_Base::move;
   void attach(const uint8_t pins[]) override {
     this->_pins = pins;
     ledcAttach(this->_pins[0], 12800, 8);
@@ -81,6 +85,7 @@ using AnalogMotor = AnalogMotor_ESP32;
 class AnalogMotor_3pin_ESP32 : public AnalogMotor_Base {
 public:
   using AnalogMotor_Base::AnalogMotor_Base;
+  using AnalogMotor_Base::move;
   void attach(const uint8_t pins[]) override {
     this->_pins = pins;
     pinMode(this->_pins[0], OUTPUT);
