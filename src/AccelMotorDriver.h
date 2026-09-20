@@ -1,26 +1,37 @@
 #pragma once
 #include "AnalogMotorDriver.h"
 
-template <class MD> class _AccelMotor : public MD {
+template <class MD>
+class _AccelMotor : public MD {
 private:
-  int _accel, _decel;
+  const int& _accel;
+  const int& _decel;
   int _target = 0;
 
 public:
-  _AccelMotor(const uint8_t (&pins)[MD::NUM_PINS], const int accel, const int decel)
+  _AccelMotor(const uint8_t (&pins)[MD::PIN_NUM], const int& accel, const int& decel)
       : MD(pins), _accel(accel), _decel(decel) {}
-  _AccelMotor(const uint8_t (&pins)[MD::NUM_PINS], const int accel) : _AccelMotor(pins, accel, accel) {}
+  _AccelMotor(const uint8_t (&pins)[MD::PIN_NUM], const int& accel)
+      : _AccelMotor(pins, accel, accel) {}
 
-  int writeAccel() {
+  int write() override {
     int delta_speed = min(this->_target - this->_speed, 
                           (this->_speed > this->_target ? this->_accel : this->_decel));
     this->write(this->_speed + delta_speed);
     return this->_speed + delta_speed;
   }
 
-  int writeAccel(int target) {
-    this->set_target(target);
-    return this->writeAccel();
+  int write(int target) override {
+    this->setTarget(target);
+    return this->write();
+  }
+
+  int writeDirect(int speed) {
+    return MD::write(speed);
+  }
+
+  int writeDirect() {
+    return MD::write();
   }
 
   int setTarget(int target) {
