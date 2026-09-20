@@ -1,36 +1,34 @@
 #pragma once
 #include "AnalogMotorDriver.h"
 
-template<class MD>
-class _AccelMotor : public MD {
+template <class MD> class _AccelMotor : public MD {
 private:
   int _accel, _decel;
   int _target = 0;
-public:
-  _AccelMotor(const int accel, const int decel) : _accel(accel), _decel(decel) {}
-  _AccelMotor(const int accel) : _AccelMotor(accel, accel) {}
 
-  int move_a() {
-    int delta_speed = min(this->_target - this->_speed, (this->_speed > this->_target ? this->_accel : this->_decel));
-    this->move(this->_speed + delta_speed);
+public:
+  _AccelMotor(const uint8_t (&pins)[MD::NUM_PINS], const int accel, const int decel)
+      : MD(pins), _accel(accel), _decel(decel) {}
+  _AccelMotor(const uint8_t (&pins)[MD::NUM_PINS], const int accel) : _AccelMotor(pins, accel, accel) {}
+
+  int writeAccel() {
+    int delta_speed = min(this->_target - this->_speed, 
+                          (this->_speed > this->_target ? this->_accel : this->_decel));
+    this->write(this->_speed + delta_speed);
     return this->_speed + delta_speed;
   }
 
-  int move_a(int target) {
+  int writeAccel(int target) {
     this->set_target(target);
-    return this->move_a();
+    return this->writeAccel();
   }
 
-  int set_target(int target) {
-    this->_target = constrain(target, -255, 255);
+  int setTarget(int target) {
+    this->_target = constrain(target, -MD::MAX_SPEED, MD::MAX_SPEED);
     return this->_target;
   }
-  const int get_accel() {
-    return this->_accel;
-  }
-  const int get_decel() {
-    return this->_decel;
-  }
+  const int getAccel() { return this->_accel; }
+  const int getDecel() { return this->_decel; }
 };
 
 #if defined(ARDUINO_ARCH_AVR)
