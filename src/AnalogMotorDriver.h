@@ -1,8 +1,7 @@
 #pragma once
 #include <Arduino.h>
 
-template <int _MAX_SPEED = 255, int _PIN_NUM = 2>
-class AnalogMotor_Base {
+template <int _MAX_SPEED = 255, int _PIN_NUM = 2> class AnalogMotor_Base {
 protected:
   const uint8_t (&_pins)[_PIN_NUM];
   int _speed = 0;
@@ -64,6 +63,7 @@ public:
 using AnalogMotor_3pin = AnalogMotor_3pin_Arduino;
 
 #elif defined(ESP32)
+
 #if (ESP_ARDUINO_VERSION >= ESP_ARDUINO_VERSION_VAL(3, 0, 0))
 class AnalogMotor_ESP32 : public AnalogMotor_Base<255, 2> {
 public:
@@ -79,12 +79,40 @@ public:
     return this->_speed;
   }
 };
+
 #else
+class AnalogMotor_ESP32 : public AnalogMotor_Base<255, 2> {
+private:
+  static int _instance_count;
+  static uint8_t _ledc_channels[4][2] = {
+    {0, 1}, {2, 3}, {4, 5}, {6, 7}
+  };
+  const uint8_t (&_ledc_channels)[2];
 
-
+public:
+  AnalogMotor_ESP32(const uint8_t (&pins)[2], const uint8_t (&ledc_channels)[2])
+      : AnalogMotor_Base<255, 2>(pins), _ledc_channels(ledc_channels) {
+    _instance_count++;
+  }
+  AnalogMotor_ESP32(const uint8_t (&pins)[2]) : AnalogMotor_ESP32(pins, _ledc_channels[_instance_count]) {}
+  using AnalogMotor_Base<255, 2>::write;
+  void begin() override {
+    ledcSetup(this->_ledc_channels[0], 12800, 8);
+    ledcAttachPin(this->_pins[0], this->_ledc_channels[0]);
+    ledcSetup(this->_ledc_channels[1], 12800, 8);
+    ledcAttachPin(this->_pins[1], this->_ledc_channels[1]);
+  }
+  int write() override {
+    ledcWrite(this->_ledc_channels[0], max(this->_speed, 0));
+    ledcWrite(this->_ledc_channels[1], max(-this->_speed, 0));
+    return this->_speed;
+  }
+};
 #endif
+
 using AnalogMotor = AnalogMotor_ESP32;
 
+#if (ESP_ARDUINO_VERSION >= ESP_ARDUINO_VERSION_VAL(3, 0, 0))
 class AnalogMotor_3pin_ESP32 : public AnalogMotor_Base<255, 3> {
 public:
   using AnalogMotor_Base::AnalogMotor_Base;
@@ -101,6 +129,35 @@ public:
     return this->_speed;
   }
 };
+
+#else
+class AnalogMotor_3pin_ESP32 : public AnalogMotor_Base<255, 3> {
+private:
+  static int _instance_count;
+  static uint8_t _ledc_channels[8] = {0, 1, 2, 3, 4, 5, 6, 7};
+  const uint8_t _ledc_channel;
+
+public:
+  AnalogMotor_3pin_ESP32(const uint8_t (&pins)[3], const uint8_t ledc_channel)
+      : AnalogMotor_Base<255, 3>(pins), _ledc_channel(ledc_channel) {
+    _instance_count++;
+  }
+  AnalogMotor_3pin_ESP32(const uint8_t (&pins)[3]) : AnalogMotor_3pin_ESP32(pins, _ledc_channels[_instance_count]) {}
+  using AnalogMotor_Base<255, 3>::write;
+  void begin() override {
+    pinMode(this->_pins[0], OUTPUT);
+    pinMode(this->_pins[1], OUTPUT);
+    ledcSetup(this->_ledc_channel, 12800, 8);
+    ledcAttachPin(this->_pins[2], this->_ledc_channel);
+  }
+  int write() override {
+    digitalWrite(this->_pins[0], this->_speed > 0);
+    digitalWrite(this->_pins[1], this->_speed < 0);
+    ledcWrite(this->_ledc_channel, abs(this->_speed));
+    return this->_speed;
+  }
+};
+#endif
 using AnalogMotor_3pin = AnalogMotor_3pin_ESP32;
 
 #endif
