@@ -2,6 +2,9 @@
 #include "AnalogMotorDriver.h"
 
 template <class MD>
+concept AnalogMotorConcept = std::derived_from<AnalogMotor_BaseBase, MD>;
+
+template <AnalogMotorConcept MD>
 class _AccelMotor : public MD {
 private:
   const int& _accel;

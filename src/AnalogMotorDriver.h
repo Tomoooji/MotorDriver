@@ -1,15 +1,24 @@
 #pragma once
 #include <Arduino.h>
 
-template <int _MAX_SPEED = 255, int _PIN_NUM = 2> class AnalogMotor_Base {
+class AnalogMotor_Interface{
+public:
+  virtual ~AnalogMotor_Interface() = default;
+  virtual void begin() = 0;
+  virtual int write() = 0;
+};
+
+template <int MAX_SPEED_VALUE = 255, int PIN_NUMBER = 2>
+class AnalogMotor_Base : public AnalogMotor_BaseBase {
 protected:
-  const uint8_t (&_pins)[_PIN_NUM];
+  const uint8_t (&_pins)[PIN_NUMBER];
   int _speed = 0;
 
 public:
-  static constexpr int MAX_SPEED = _MAX_SPEED;
-  static constexpr int PIN_NUM = _PIN_NUM;
-  AnalogMotor_Base(const uint8_t (&pins)[_PIN_NUM]) : _pins(pins) {}
+  static constexpr int MAX_SPEED = MAX_SPEED_VALUE;
+  static constexpr int PIN_NUM = PIN_NUMBER;
+  AnalogMotor_Base(const uint8_t (&pins)[PIN_NUMBER]) : _pins(pins) {}
+  ~AnalogMotor_Base() override = default;
   virtual void begin();
   virtual int write() = 0;
   virtual int write(int speed) {
@@ -17,12 +26,12 @@ public:
     return this->write();
   }
   int setSpeed(int speed) {
-    this->_speed = constrain(speed, -_MAX_SPEED, _MAX_SPEED);
+    this->_speed = constrain(speed, -MAX_SPEED, MAX_SPEED);
     return this->_speed;
   }
   const int getSpeed() { return this->_speed; }
   const uint8_t getPin(uint8_t idx) {
-    return idx < _PIN_NUM ? this->_pins[idx] : 0;
+    return idx < PIN_NUM ? this->_pins[idx] : 0;
   }
 };
 
@@ -161,23 +170,3 @@ public:
 using AnalogMotor_3pin = AnalogMotor_3pin_ESP32;
 
 #endif
-
-/*
-#include "PCA9685.h"
-
-class PCAMotor : public AnalogMotor_Base<255, 2> {
-private:
-  PCA9685 &_pwm;
-
-public:
-  PCAMotor(PCA9685 &pwm, const uint8_t pins[2])
-      : _pwm(pwm), AnalogMotor_Base<255, 2>(pins) {}
-  using AnalogMotor_Base::write;
-  void begin() override {}
-  int write() override {
-    this->_pwm.setPWM(this->_pins[0], 0, max(this->_speed, 0) * 16);
-    this->_pwm.setPWM(this->_pins[1], 0, max(-this->_speed, 0) * 16);
-    return this->_speed;
-  }
-};
-//*/
