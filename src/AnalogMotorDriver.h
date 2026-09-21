@@ -170,3 +170,6 @@ public:
 using AnalogMotor_3pin = AnalogMotor_3pin_ESP32;
 
 #endif
+
+template <class MD>
+concept AnalogMotorConcept = std::derived_from<AnalogMotor_Interface, MD>;
