@@ -2,17 +2,17 @@
 #include "AnalogMotorDriver.h"
 
 template <AnalogMotorConcept MD>
-class _AccelMotor : public MD {
+class AccelMotorWrapper : public MD {
 private:
   const int& _accel;
   const int& _decel;
   int _target = 0;
 
 public:
-  _AccelMotor(const uint8_t (&pins)[MD::PIN_NUM], const int& accel, const int& decel)
+  AccelMotorWrapper(const uint8_t (&pins)[MD::PIN_NUM], const int& accel, const int& decel)
       : MD(pins), _accel(accel), _decel(decel) {}
-  _AccelMotor(const uint8_t (&pins)[MD::PIN_NUM], const int& accel)
-      : _AccelMotor(pins, accel, accel) {}
+  AccelMotorWrapper(const uint8_t (&pins)[MD::PIN_NUM], const int& accel)
+      : AccelMotorWrapper(pins, accel, accel) {}
 
   int write() override {
     int delta_speed = min(this->_target - this->_speed, 
@@ -43,11 +43,11 @@ public:
 };
 
 #if defined(ARDUINO_ARCH_AVR)
-using AccelMotor = _AccelMotor<AnalogMotor_Arduino>;
-using AccelMotor_3pin = _AccelMotor<AnalogMotor_3pin_Arduino>;
+using AccelMotor = AccelMotorWrapper<AnalogMotor_Arduino>;
+using AccelMotor_3pin = AccelMotorWrapper<AnalogMotor_3pin_Arduino>;
 
 #elif defined(ESP32)
-using AccelMotor = _AccelMotor<AnalogMotor_ESP32>;
-using AccelMotor_3pin = _AccelMotor<AnalogMotor_3pin_ESP32>;
+using AccelMotor = AccelMotorWrapper<AnalogMotor_ESP32>;
+using AccelMotor_3pin = AccelMotorWrapper<AnalogMotor_3pin_ESP32>;
 
 #endif

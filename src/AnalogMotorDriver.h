@@ -1,26 +1,17 @@
 #pragma once
-#include <Arduino.h>
+#include "DigitalMotorDriver.h"
 
-class AnalogMotor_Interface{
-public:
-  virtual ~AnalogMotor_Interface() = default;
-  virtual void begin() = 0;
-  virtual int write() = 0;
-};
-
-template <int MAX_SPEED_VALUE = 255, int PIN_NUMBER = 2>
-class AnalogMotor_Base : public AnalogMotor_BaseBase {
+template <int MAX_SPEED_VALUE = 255, int PIN_COUNT = 2>
+class AnalogMotor_Base : public MotorInterface {
 protected:
-  const uint8_t (&_pins)[PIN_NUMBER];
+  const uint8_t (&_pins)[PIN_COUNT];
   int _speed = 0;
 
 public:
   static constexpr int MAX_SPEED = MAX_SPEED_VALUE;
-  static constexpr int PIN_NUM = PIN_NUMBER;
-  AnalogMotor_Base(const uint8_t (&pins)[PIN_NUMBER]) : _pins(pins) {}
+  static constexpr int PIN_NUM = PIN_COUNT;
+  AnalogMotor_Base(const uint8_t (&pins)[PIN_COUNT]) : _pins(pins) {}
   ~AnalogMotor_Base() override = default;
-  virtual void begin();
-  virtual int write() = 0;
   virtual int write(int speed) {
     this->setSpeed(speed);
     return this->write();
@@ -75,7 +66,7 @@ using AnalogMotor_3pin = AnalogMotor_3pin_Arduino;
 
 #if (ESP_ARDUINO_VERSION >= ESP_ARDUINO_VERSION_VAL(3, 0, 0))
 class AnalogMotor_ESP32 : public AnalogMotor_Base<255, 2> {
-public:
+  public:
   using AnalogMotor_Base::AnalogMotor_Base;
   using AnalogMotor_Base::write;
   void begin() override {
@@ -168,8 +159,9 @@ public:
 };
 #endif
 using AnalogMotor_3pin = AnalogMotor_3pin_ESP32;
-
 #endif
 
 template <class MD>
-concept AnalogMotorConcept = std::derived_from<AnalogMotor_Interface, MD>;
+concept AnalogMotorConcept = std::derived_from<MotorInterface, MD> && requires(MD m) {
+  { m.getSpeed() } -> std::convertible_to<int>;
+};    
