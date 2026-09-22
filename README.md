@@ -13,11 +13,13 @@ MotorDriver/
 │  ├─ AccelMotorDriver.h    # 加減速付きモータードライバーのヘッダファイル
 │  ├─ AnalogMotorDriver.h   # アナログ出力モータードライバーのヘッダファイル
 │  └─ DigitalMotorDriver.h  # デジタル出力モータードライバーのヘッダファイル
+├─ library.json
 ├─ library.properties
 └─ README.md
 ```
 
 ## 使い方
+種々の定数はクラス外で定義された実体に対するconst参照を持つようにしています。  
 ### `DigitalMotorDriver.h`
 - インクルードしてDigitalMotorクラスのインスタンスを作成(ピン配列をコンストラクタの引数で渡す)。
 - `begin()`で初期化、`write(方向は-1,0,1で指定)`でモーターを回転させる。
