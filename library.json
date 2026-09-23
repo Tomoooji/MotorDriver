@@ -7,7 +7,7 @@
     "platforms": ["atmelavr", "espressif32"],
     "repository": {
         "type": "git",
-        "url": "https://github.com/yourusername/MotorDriver.git"
+        "url": "https://github.com/tomoooji/MotorDriver.git"
     },
     "author": {
         "name": "Tomoji Kanae",

@@ -1,10 +1,12 @@
-// Arduino UNOでモータードライバーL298Nを制御する //
+// モータードライバーL298Nを制御する //
 
+#include <array> // ライブラリ内でincludeはしているが念のため
 #include <AnalogMotorDriver.h>
 
+constexpr std::array<uint8_t, 3> pinA = {9, 8, 10};
+constexpr std::array<uint8_t, 3> pinB = {7, 6, 5};
+
 struct Analog_L298N {
-  const int pinA[] = {9, 8, 10};
-  const int pinB[] = {7, 6, 5};
   AnalogMotor_3pin A(pinA);
   AnalogMotor_3pin B(pinB);
   void begin() {
