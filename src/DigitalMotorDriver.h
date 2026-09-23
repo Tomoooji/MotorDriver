@@ -1,5 +1,4 @@
 #pragma once
-#include <array>
 #include <Arduino.h>
 
 class MotorInterface {
@@ -11,11 +10,11 @@ public:
 
 class DigitalMotor : public MotorInterface {
 private:
-  std::array<uint8_t, 2> _pins;
+  const uint8_t (&_pins)[2];
   int _direction = 0;
 
 public:
-  DigitalMotor(std::array<uint8_t, 2> pins) : _pins(pins) {}
+  DigitalMotor(const uint8_t (&pins)[2]) : _pins(pins) {}
   void begin() override {
     pinMode(this->_pins[0], OUTPUT);
     pinMode(this->_pins[1], OUTPUT);
