@@ -1,5 +1,4 @@
 #pragma once
-#include <concepts>
 #include "DigitalMotorDriver.h"
 
 template <int MAX_SPEED_VALUE = 255, int PIN_COUNT = 2>
@@ -12,6 +11,7 @@ public:
   static constexpr int MAX_SPEED = MAX_SPEED_VALUE;
   static constexpr int PIN_NUM = PIN_COUNT;
   AnalogMotor_Base(const uint8_t (&pins)[PIN_COUNT]) : _pins(pins) {}
+  using MotorInterface::write;
   virtual int write (int speed) {
     this->setSpeed(speed);
     return this->write();
@@ -90,9 +90,9 @@ private:
   const uint8_t (&_ledc_channels)[2];
 
 public:
-  AnalogMotor_ESP32(const uint8_t (&pins)[2], const uint8_t (&ledc_channels)[2])
-      : AnalogMotor_Base<255, 2>(pins), _ledc_channels(ledc_channels) {
-    _instance_count++;
+AnalogMotor_ESP32(const uint8_t (&pins)[2], const uint8_t (&ledc_channels)[2])
+: AnalogMotor_Base<255, 2>(pins), _ledc_channels(ledc_channels) {
+  _instance_count++;
   }
   AnalogMotor_ESP32(const uint8_t (&pins)[2]) : AnalogMotor_ESP32(pins, _all_ledc_channels[_instance_count]) {}
   using AnalogMotor_Base<255, 2>::write;
@@ -161,7 +161,8 @@ public:
 using AnalogMotor_3pin = AnalogMotor_3pin_ESP32;
 #endif
 
+#include <concepts>
 template <class MD>
-concept AnalogMotorConcept = std::derived_from<MotorInterface, MD> && requires(MD m) {
+concept AnalogMotorConcept = std::derived_from<MD, MotorInterface> && requires(MD m) {
   { m.getSpeed() } -> std::convertible_to<int>;
-};    
+};
