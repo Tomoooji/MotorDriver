@@ -1,4 +1,5 @@
 #pragma once
+#include <concepts>
 #include "DigitalMotorDriver.h"
 
 template <int MAX_SPEED_VALUE = 255, int PIN_COUNT = 2>
