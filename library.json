@@ -1,0 +1,17 @@
+{
+    "name": "MotorDriver",
+    "version": "3.0.0",
+    "description": "ArduinoとESP32で2ピンと3ピンタイプのモータードライバーをデジタル/アナログ出力で制御するライブラリ",
+    "keywords": ["Arduino", "ESP32", "Motor", "Driver"],
+    "frameworks": "arduino",
+    "platforms": ["atmelavr", "espressif32"],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/tomoooji/MotorDriver.git"
+    },
+    "author": {
+        "name": "Tomoji Kanae",
+        "url": "github.com/tomoooji"
+        },
+    "license": "MIT"
+}
