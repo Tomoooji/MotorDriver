@@ -19,6 +19,7 @@ MotorDriver/
 ```
 
 ## 使い方
+**conceptを使用するためDigitalMotorDriver.h以外はC++20が必要です**  
 種々の定数はクラス外で定義された実体に対するconst参照を持つようにしています。  
 ### `DigitalMotorDriver.h`
 - インクルードしてDigitalMotorクラスのインスタンスを作成(ピン配列をコンストラクタの引数で渡す)。
@@ -41,5 +42,5 @@ MotorDriver/
 [MIT License](LICENSE)
 
 ---
-最終更新日: 2026-09-22  
+最終更新日: 2026-10-11  
 更新者: Tomoooji  
