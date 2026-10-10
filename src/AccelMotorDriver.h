@@ -28,7 +28,7 @@ public:
   }
 
   int writeDirect(int speed) {
-    this->setSpeed();
+    this->setSpeed(speed);
     return MD::write();
   }
 
