@@ -9,15 +9,17 @@ private:
   int _target = 0;
 
 public:
-  AccelMotorWrapper(const uint8_t (&pins)[MD::PIN_NUM],const uint8_t accel, const uint8_t decel)
+  AccelMotorWrapper(const uint8_t (&pins)[MD::PIN_NUM], const uint8_t &accel, const uint8_t &decel)
       : MD(pins), _accel(accel), _decel(decel) {}
-  AccelMotorWrapper(const uint8_t (&pins)[MD::PIN_NUM], const uint8_t accel_decel)
+  AccelMotorWrapper(const uint8_t (&pins)[MD::PIN_NUM], const uint8_t &accel_decel)
       : AccelMotorWrapper(pins, accel_decel, accel_decel) {}
 
   int write() override {
-    int delta_speed = min(this->_target - this->getSpeed(), 
-                          (this->getSpeed() > this->_target ? this->_accel : this->_decel));
-    this->write(this->getSpeed() + delta_speed);
+    int delta = this->_target - this->getSpeed();
+    MD::write(this->getSpeed() +
+         delta > this->_accel ? this->_accel : (
+        delta < -this->_decel ? -this->_decel :delta)
+        );
     return this->getSpeed();
   }
 
