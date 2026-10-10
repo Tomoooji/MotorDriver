@@ -16,10 +16,10 @@ public:
 
   int write() override {
     int delta = this->_target - this->getSpeed();
-    MD::write(delta > this->_accel ? this->getSpeed() + this->_accel :
+    this->setSpeed(delta > this->_accel ? this->getSpeed() + this->_accel :
              (delta < -this->_decel ? this->getSpeed() - this->_decel :
               this->getSpeed() + delta));
-    return this->getSpeed();
+    return MD::write();
   }
 
   int write(int target) override {
@@ -28,7 +28,8 @@ public:
   }
 
   int writeDirect(int speed) {
-    return MD::write(speed);
+    this->setSpeed();
+    return MD::write();
   }
 
   int writeDirect() {
