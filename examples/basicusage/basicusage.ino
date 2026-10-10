@@ -7,11 +7,11 @@
 // 2つのモーターを制御する場合の例 //
 constexpr uint8_t pins1[] = {17, 16};
 constexpr uint8_t pins2[] = {14, 15};
-constexpr uint8_t pin3[] = {32, 32};
+constexpr uint8_t pins3[] = {32, 32};
 
 DigitalMotor test1(pins1);
 AnalogMotor test2(pins2);
-AccelMotor test3(pin3, 10);
+AccelMotor test3(pins3, 10);
 
 void setup() {
   test1.begin();
