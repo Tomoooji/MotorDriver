@@ -4,22 +4,21 @@
 template <AnalogMotorConcept MD>
 class AccelMotorWrapper : public MD {
 private:
-  const uint8_t &_accel;
-  const uint8_t &_decel;
+  const uint8_t _accel;
+  const uint8_t _decel;
   int _target = 0;
 
 public:
-  AccelMotorWrapper(const uint8_t (&pins)[MD::PIN_NUM], const uint8_t &accel, const uint8_t &decel)
+  AccelMotorWrapper(const uint8_t (&pins)[MD::PIN_NUM], const uint8_t accel, const uint8_t decel)
       : MD(pins), _accel(accel), _decel(decel) {}
-  AccelMotorWrapper(const uint8_t (&pins)[MD::PIN_NUM], const uint8_t &accel_decel)
+  AccelMotorWrapper(const uint8_t (&pins)[MD::PIN_NUM], const uint8_t accel_decel)
       : AccelMotorWrapper(pins, accel_decel, accel_decel) {}
 
   int write() override {
     int delta = this->_target - this->getSpeed();
-    MD::write(this->getSpeed() +
-         delta > this->_accel ? this->_accel : (
-        delta < -this->_decel ? -this->_decel :delta)
-        );
+    MD::write(delta > this->_accel ? this->getSpeed() + this->_accel :
+             (delta < -this->_decel ? this->getSpeed() - this->_decel :
+              this->getSpeed() + delta));
     return this->getSpeed();
   }
 
