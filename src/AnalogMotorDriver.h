@@ -80,11 +80,8 @@ class AnalogMotor_ESP32 : public AnalogMotor_Base<255, 2> {
   }
 };
 
-#endif
-
 using AnalogMotor = AnalogMotor_ESP32;
 
-#if (ESP_ARDUINO_VERSION >= ESP_ARDUINO_VERSION_VAL(3, 0, 0))
 class AnalogMotor_3pin_ESP32 : public AnalogMotor_Base<255, 3> {
 public:
   using AnalogMotor_Base::AnalogMotor_Base;
@@ -101,8 +98,9 @@ public:
     return this->_speed;
   }
 };
-#endif
+
 using AnalogMotor_3pin = AnalogMotor_3pin_ESP32;
+#endif
 #endif
 
 #include <concepts>
