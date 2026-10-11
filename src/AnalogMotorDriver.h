@@ -103,9 +103,11 @@ using AnalogMotor_3pin = AnalogMotor_3pin_ESP32;
 #endif
 #endif
 
+#if __cplusplus >= 202002L
 #include <concepts>
 template <class MD>
 concept AnalogMotorConcept = std::derived_from<MD, MotorInterface> && requires(MD m) {
   { m.getSpeed() } -> std::convertible_to<int>;
   { m.write(0) } -> std::convertible_to<int>;
 };
+#endif

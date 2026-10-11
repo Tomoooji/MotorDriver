@@ -1,7 +1,11 @@
 #pragma once
 #include "AnalogMotorDriver.h"
 
+#if __cplusplus >= 202002L
 template <AnalogMotorConcept MD>
+#else
+template <class MD>
+#endif
 class AccelMotorWrapper : public MD {
 private:
   const uint8_t _accel;
