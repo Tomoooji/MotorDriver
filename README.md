@@ -6,7 +6,7 @@ ArduinoとESP32で2ピンと3ピンタイプのモータードライバーをデ
 MotorDriver/
 ├─ examples/                # サンプルフォルダ
 │  ├─ basicusage/
-│  │  └─ basicusage.ino     # DigitalMotorDriverとAnalogMotorDriverの基本的な使い方の例
+│  │  └─ basicusage.ino     # 各クラスの基本的な使い方の例
 │  └─ L298N_analog/
 │     └─ L298N_analog.ino   # L298NをAnalogMotorDriverで制御する例
 ├─ src/                     # ライブラリ本体
@@ -19,8 +19,7 @@ MotorDriver/
 ```
 
 ## 使い方
-**conceptを使用するためDigitalMotorDriver.h以外はC++20が必要です**  
-種々の定数はクラス外で定義された実体に対するconst参照を持つようにしています。  
+種々の定数はクラス外で定義された実体(constexpr推奨)に対するconst参照を持つようにしています。  
 ### `DigitalMotorDriver.h`
 - インクルードしてDigitalMotorクラスのインスタンスを作成(ピン配列をコンストラクタの引数で渡す)。
 - `begin()`で初期化、`write(方向は-1,0,1で指定)`でモーターを回転させる。
