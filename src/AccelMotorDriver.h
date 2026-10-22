@@ -1,44 +1,59 @@
 #pragma once
 #include "AnalogMotorDriver.h"
 
-template<class MD>
-class _AccelMotor : public MD {
+#if __cplusplus >= 202002L
+template <AnalogMotorConcept MD>
+#else
+template <class MD>
+#endif
+class AccelMotorWrapper : public MD {
 private:
-  int _accel, _decel;
+  const uint8_t _accel;
+  const uint8_t _decel;
   int _target = 0;
+
 public:
-  _AccelMotor(const int accel, const int decel) : _accel(accel), _decel(decel) {}
-  _AccelMotor(const int accel) : _AccelMotor(accel, accel) {}
+  AccelMotorWrapper(const uint8_t (&pins)[MD::PIN_NUM], const uint8_t accel, const uint8_t decel)
+      : MD(pins), _accel(accel), _decel(decel) {}
+  AccelMotorWrapper(const uint8_t (&pins)[MD::PIN_NUM], const uint8_t accel_decel)
+      : AccelMotorWrapper(pins, accel_decel, accel_decel) {}
 
-  int move_a() {
-    int delta_speed = min(this->_target - this->_speed, (this->_speed > this->_target ? this->_accel : this->_decel));
-    this->move(this->_speed + delta_speed);
-    return this->_speed + delta_speed;
+  int write() override {
+    int delta = this->_target - this->getSpeed();
+    this->setSpeed(delta > this->_accel ? this->getSpeed() + this->_accel :
+             (delta < -this->_decel ? this->getSpeed() - this->_decel :
+              this->getSpeed() + delta));
+    return MD::write();
   }
 
-  int move_a(int target) {
-    this->set_target(target);
-    return this->move_a();
+  int write(int target) override {
+    this->setTarget(target);
+    return this->write();
   }
 
-  int set_target(int target) {
-    this->_target = constrain(target, -255, 255);
+  int writeDirect(int speed) {
+    this->setSpeed(speed);
+    return MD::write();
+  }
+
+  int writeDirect() {
+    return MD::write();
+  }
+
+  int setTarget(int target) {
+    this->_target = constrain(target, -MD::MAX_SPEED, MD::MAX_SPEED);
     return this->_target;
   }
-  const int get_accel() {
-    return this->_accel;
-  }
-  const int get_decel() {
-    return this->_decel;
-  }
+  const int getAccel() { return this->_accel; }
+  const int getDecel() { return this->_decel; }
 };
 
 #if defined(ARDUINO_ARCH_AVR)
-using AccelMotor = _AccelMotor<AnalogMotor_Arduino>;
-using AccelMotor_3pin = _AccelMotor<AnalogMotor_3pin_Arduino>;
+using AccelMotor = AccelMotorWrapper<AnalogMotor_Arduino>;
+using AccelMotor_3pin = AccelMotorWrapper<AnalogMotor_3pin_Arduino>;
 
 #elif defined(ESP32)
-using AccelMotor = _AccelMotor<AnalogMotor_ESP32>;
-using AccelMotor_3pin = _AccelMotor<AnalogMotor_3pin_ESP32>;
+using AccelMotor = AccelMotorWrapper<AnalogMotor_ESP32>;
+using AccelMotor_3pin = AccelMotorWrapper<AnalogMotor_3pin_ESP32>;
 
 #endif
