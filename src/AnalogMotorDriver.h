@@ -64,14 +64,18 @@ using AnalogMotor_3pin = AnalogMotor_3pin_Arduino;
 
 #elif defined(ESP32)
 
+#ifndef LEDC_FREQUENCY
+#define LEDC_FREQUENCY 20000
+#else
+
 #if (ESP_ARDUINO_VERSION >= ESP_ARDUINO_VERSION_VAL(3, 0, 0))
 class AnalogMotor_ESP32 : public AnalogMotor_Base<255, 2> {
 public:
   using AnalogMotor_Base::AnalogMotor_Base;
   using AnalogMotor_Base::write;
   void begin() override {
-    ledcAttach(this->_pins[0], 12800, 8);
-    ledcAttach(this->_pins[1], 12800, 8);
+    ledcAttach(this->_pins[0], LEDC_FREQUENCY, 8);
+    ledcAttach(this->_pins[1], LEDC_FREQUENCY, 8);
   }
   int write() override {
     ledcWrite(this->_pins[0], max(this->_speed, 0));
@@ -96,8 +100,8 @@ public:
       : AnalogMotor_ESP32(pins, _ledc_channel_all[(_instance_count*2)%16], _ledc_channel_all[(_instance_count*2+1)%16]) {}
   using AnalogMotor_Base::write;
   void begin() override {
-    ledcSetup(this->_ledc_channel_1, 12800, 8);
-    ledcSetup(this->_ledc_channel_2, 12800, 8);
+    ledcSetup(this->_ledc_channel_1, LEDC_FREQUENCY, 8);
+    ledcSetup(this->_ledc_channel_2, LEDC_FREQUENCY, 8);
     ledcAttachPin(this->_pins[0], this->_ledc_channel_1);
     ledcAttachPin(this->_pins[1], this->_ledc_channel_2);
   }
@@ -118,7 +122,7 @@ public:
   void begin() override {
     pinMode(this->_pins[0], OUTPUT);
     pinMode(this->_pins[1], OUTPUT);
-    ledcAttach(this->_pins[2], 12800, 8);
+    ledcAttach(this->_pins[2], LEDC_FREQUENCY, 8);
   }
   int write() override {
     digitalWrite(this->_pins[0], this->_speed > 0);
@@ -142,7 +146,7 @@ public:
   void begin() override {
     pinMode(this->_pins[0], OUTPUT);
     pinMode(this->_pins[1], OUTPUT);
-    ledcSetup(this->_ledc_channel, 12800, 8);
+    ledcSetup(this->_ledc_channel, LEDC_FREQUENCY, 8);
     ledcAttachPin(this->_pins[2], this->_ledc_channel);
   }
   int write() override {
