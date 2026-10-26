@@ -66,7 +66,7 @@ using AnalogMotor_3pin = AnalogMotor_3pin_Arduino;
 
 #ifndef LEDC_FREQUENCY
 #define LEDC_FREQUENCY 20000
-#else
+#endif
 
 #if (ESP_ARDUINO_VERSION >= ESP_ARDUINO_VERSION_VAL(3, 0, 0))
 class AnalogMotor_ESP32 : public AnalogMotor_Base<255, 2> {
